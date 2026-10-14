@@ -6,6 +6,8 @@ use App\Actions\Finance\GeneratePeriodsAction;
 use App\Models\Company;
 use App\Models\Finance\Account;
 use App\Models\Finance\BankAccount;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\StockLevel;
 use App\Models\Inventory\Warehouse;
 use App\Models\User;
 use App\Services\Finance\ChartOfAccountsTemplate;
@@ -13,6 +15,7 @@ use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -168,6 +171,31 @@ trait SeedsDemoCompany
     protected function mainWarehouse(): Warehouse
     {
         return Warehouse::query()->where('code', 'MAIN')->firstOrFail();
+    }
+
+    /**
+     * Stocked goods without batch/serial tracking and not deliberately kept
+     * low — safe to buy and sell in the demo document flows.
+     *
+     * @return Collection<int, Product>
+     */
+    protected function regularGoods(): Collection
+    {
+        return Product::query()
+            ->where('type', 'goods')
+            ->where('track_batches', false)
+            ->where('track_serials', false)
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->get()
+            ->filter(fn (Product $p) => (($p->getAttribute('attributes') ?? [])['demo_flag'] ?? null) === null)
+            ->values();
+    }
+
+    /** On-hand quantity of a product in a warehouse. */
+    protected function onHand(int $productId, int $warehouseId): float
+    {
+        return (float) StockLevel::query()->where('product_id', $productId)->where('warehouse_id', $warehouseId)->sum('quantity_on_hand');
     }
 
     /** The operating bank account (GL 1010), created on first use. */
