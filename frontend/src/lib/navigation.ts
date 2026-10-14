@@ -211,24 +211,22 @@ export const userMenuItems: NavItem[] = [
 // Unused-icon guard so tree-shaking keeps the set stable for later modules.
 export const iconRegistry = { CalendarCheck, BookOpen, FileText, FileSignature, Truck, PackageSearch, Warehouse, ArrowLeftRight, Map };
 
-/** Flatten for breadcrumbs / page titles */
+/**
+ * Flatten for breadcrumbs / page titles. Picks the most specific match (longest
+ * href), so `/finance/invoices/12` resolves to Receivables › Customer invoices
+ * rather than the `/finance` (Accounting) prefix that appears earlier.
+ */
 export function findNavTrail(pathname: string): NavItem[] {
-  const trail: NavItem[] = [];
-  const walk = (items: NavItem[], acc: NavItem[]): boolean => {
+  let best: NavItem[] = [];
+  const walk = (items: NavItem[], acc: NavItem[]) => {
     for (const item of items) {
+      if (item.children) walk(item.children, [...acc, item]);
       const matches = item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(item.href + '/');
-      if (item.children) {
-        if (walk(item.children, [...acc, item])) return true;
-      }
-      if (matches) {
-        trail.push(...acc, item);
-        return true;
-      }
+      const current = best[best.length - 1];
+      // Strictly longer wins; on a tie the earlier (child-first) match is kept.
+      if (matches && (!current || item.href.length > current.href.length)) best = [...acc, item];
     }
-    return false;
   };
-  for (const section of navigation) {
-    if (walk(section.items, [])) break;
-  }
-  return trail;
+  for (const section of navigation) walk(section.items, []);
+  return best;
 }

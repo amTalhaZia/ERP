@@ -34,7 +34,7 @@ class DbCheckCommand extends Command
             $this->components->twoColumnDetail('Server version', $version);
             $this->components->twoColumnDetail('TLS cipher', $cipher ?? 'none (plaintext)');
             $this->components->twoColumnDetail('Latency', "{$ms} ms");
-            $this->components->twoColumnDetail('Tables', (string) count(DB::connection()->getSchemaBuilder()->getTableListing()));
+            $this->components->twoColumnDetail('Tables', (string) count(DB::connection()->getSchemaBuilder()->getTableListing(DB::connection()->getDatabaseName(), false)));
             $this->components->info('Database connection OK.');
 
             return self::SUCCESS;

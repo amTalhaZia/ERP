@@ -42,9 +42,29 @@ copy .env.example .env.local
 npm run dev                                 # http://localhost:3000
 ```
 
-The demo seeder prints the shared demo password and one account per role
-(`owner@northwind.test`, `accountant@northwind.test`, …, `platform@erp.test`).
-Demo companies are flagged `is_demo` and the seeder refuses to run in production.
+After the first setup, `.\start-dev.ps1` starts MySQL, the API and the frontend in one go.
+
+### Demo data (development only)
+
+`php artisan db:seed --class=DemoSeeder` creates two clearly labelled demo companies —
+**Northwind Trading (Demo)** (USD) and **Indus Manufacturing (Demo)** (PKR) — with six months of
+consistent history: employees, attendance, leave, payroll runs, products and stock, suppliers and
+purchase orders, customers, quotations, orders and deliveries, invoices and payments, journal entries,
+projects, tasks and documents. Books balance in both companies; several items wait in approval inboxes.
+
+The password for all demo users is set by `DEMO_PASSWORD` (random and printed if unset):
+
+| Login | Role |
+|---|---|
+| `platform@erp.test` | Platform owner (manages companies; sees no company data) |
+| `owner@northwind.test` / `owner@indus.test` | Company owner (everything) |
+| `admin@…` | Company administrator |
+| `hr@…`, `accountant@…`, `sales@…`, `inventory@…`, `procurement@…` | Department roles |
+| `manager@…` | Department manager (approvals, projects) |
+| `employee@…` | Self-service only (leave, attendance, payslips, tasks) |
+| `auditor@…` | Read-only across modules + audit log |
+
+Demo companies are flagged `is_demo`; the seeder refuses to run in production.
 
 For production, create the first administrator explicitly:
 
@@ -73,4 +93,5 @@ cd frontend && npm run lint && npx tsc --noEmit && npm run build
 | [docs/SETUP.md](docs/SETUP.md) | Runtime installation, environment variables, CORS/cookies |
 | [docs/SECURITY.md](docs/SECURITY.md) | Security controls and production checklist |
 | [docs/MODULE_CONVENTIONS.md](docs/MODULE_CONVENTIONS.md) | How to add a backend module |
-| [docs/api/openapi.yaml](docs/api/openapi.yaml) | API reference |
+| [docs/api/openapi.yaml](docs/api/openapi.yaml) | API reference (OpenAPI 3.1) |
+| [deployment/README.md](deployment/README.md) | Production deployment, nginx, workers, backups |
