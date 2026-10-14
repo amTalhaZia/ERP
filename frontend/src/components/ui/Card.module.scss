@@ -1,0 +1,129 @@
+@use 'tokens' as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    box-shadow var(--motion-base) var(--ease),
+    border-color var(--motion-base) var(--ease),
+    transform var(--motion-base) var(--ease);
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.interactive {
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.pad-none {
+  padding: 0;
+}
+.pad-sm {
+  padding: var(--space-3);
+}
+.pad-md {
+  padding: var(--space-4);
+
+  @include up(lg) {
+    padding: var(--space-5);
+  }
+}
+.pad-lg {
+  padding: var(--space-5);
+
+  @include up(lg) {
+    padding: var(--space-6);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+
+  @include up(lg) {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  @include down(sm) {
+    flex-wrap: wrap;
+  }
+}
+
+.borderless {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.headerText {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.title {
+  @include text(md, semibold, snug);
+  color: var(--color-text);
+}
+
+.description {
+  @include text(sm, regular, snug);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-bg-subtle);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+
+  @include up(lg) {
+    padding-inline: var(--space-5);
+  }
+}
+
+.align-start {
+  justify-content: flex-start;
+}
+.align-end {
+  justify-content: flex-end;
+}
+.align-between {
+  justify-content: space-between;
+}

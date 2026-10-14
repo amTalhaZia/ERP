@@ -1,0 +1,356 @@
+@use 'tokens' as *;
+
+// ---------------------------------------------------------------------------
+// Lines editor
+// ---------------------------------------------------------------------------
+
+.linesTable {
+  min-width: 980px;
+
+  td {
+    vertical-align: top;
+  }
+}
+
+.lineNo {
+  width: 32px;
+  padding-top: 14px !important;
+  color: var(--color-text-muted);
+  @include tabular-nums;
+}
+
+.lineTotal {
+  padding-top: 14px !important;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.lineError {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-danger-text, var(--color-danger));
+  @include text(xs);
+}
+
+.rowError td {
+  background: color-mix(in srgb, var(--color-danger) 4%, transparent);
+}
+
+.pctInput input {
+  text-align: right;
+  @include tabular-nums;
+}
+
+.qtyInput input {
+  text-align: right;
+  @include tabular-nums;
+}
+
+.editorFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.previewNote {
+  @include text(xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+}
+
+// ---------------------------------------------------------------------------
+// Product combobox
+// ---------------------------------------------------------------------------
+
+.combo {
+  position: relative;
+  min-width: 0;
+}
+
+.comboMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  @include text(xs);
+  color: var(--color-text-muted);
+
+  button {
+    color: var(--color-primary-text);
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+}
+
+.listbox {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 300px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  @include text(sm);
+
+  &[aria-selected='true'] {
+    background: var(--color-surface-hover);
+  }
+
+  strong {
+    font-weight: 500;
+    display: block;
+    @include truncate;
+  }
+
+  small {
+    color: var(--color-text-muted);
+    @include text(xs);
+  }
+}
+
+.optionPrice {
+  white-space: nowrap;
+  @include tabular-nums;
+  color: var(--color-text-secondary);
+}
+
+.optionEmpty {
+  padding: var(--space-3);
+  color: var(--color-text-muted);
+  @include text(sm);
+}
+
+// ---------------------------------------------------------------------------
+// Shared layout bits
+// ---------------------------------------------------------------------------
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.metrics {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.inlineFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.tag {
+  display: inline-flex;
+  margin: 0 var(--space-1) var(--space-1) 0;
+}
+
+// ---------------------------------------------------------------------------
+// Communications timeline
+// ---------------------------------------------------------------------------
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-divider);
+  }
+}
+
+.timelineItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+.timelineIcon {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.timelineBody {
+  min-width: 0;
+
+  h4 {
+    margin: 0;
+    @include text(sm, semibold);
+    color: var(--color-text);
+  }
+
+  p {
+    margin: var(--space-1) 0 0;
+    @include text(sm);
+    color: var(--color-text-secondary);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+.timelineMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-1);
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+// ---------------------------------------------------------------------------
+// Contacts
+// ---------------------------------------------------------------------------
+
+.contactGrid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.contactCard {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  min-width: 0;
+
+  > div {
+    min-width: 0;
+    flex: 1;
+  }
+
+  strong {
+    display: block;
+    @include text(sm, semibold);
+    @include truncate;
+  }
+
+  span,
+  a {
+    display: block;
+    @include text(xs);
+    color: var(--color-text-muted);
+    @include truncate;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Horizontal bars (pipeline weighted value)
+// ---------------------------------------------------------------------------
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  li {
+    display: grid;
+    grid-template-columns: minmax(90px, 160px) minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: center;
+    @include text(sm);
+  }
+}
+
+.barLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  @include truncate;
+}
+
+.barTrack {
+  position: relative;
+  height: 12px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-bg-subtle);
+  overflow: hidden;
+}
+
+.barFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+}
+
+.barGhost {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  opacity: 0.25;
+}
+
+.barValue {
+  white-space: nowrap;
+  @include tabular-nums;
+  font-weight: 500;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}

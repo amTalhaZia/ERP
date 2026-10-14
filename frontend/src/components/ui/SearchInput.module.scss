@@ -1,0 +1,6 @@
+@use 'tokens' as *;
+@use './control' as *;
+
+.clear {
+  @include control-inline-button;
+}

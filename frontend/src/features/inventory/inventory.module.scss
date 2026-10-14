@@ -1,0 +1,159 @@
+@use 'tokens' as *;
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.in {
+  color: var(--color-success-text);
+  font-weight: 600;
+  @include tabular-nums;
+}
+
+.out {
+  color: var(--color-danger-text);
+  font-weight: 600;
+  @include tabular-nums;
+}
+
+.lowRow {
+  color: var(--color-warning-text);
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+
+  @include up(lg) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+// ---- Product picker (combobox) ----
+
+.picker {
+  position: relative;
+  min-width: 0;
+}
+
+.pickerList {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.pickerOption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  cursor: pointer;
+  @include text(sm);
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+  }
+
+  &[data-active],
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+.pickerEmpty {
+  padding: var(--space-3);
+  color: var(--color-text-muted);
+  @include text(sm);
+}
+
+// ---- Product detail ----
+
+.productHead {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.image {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  object-fit: cover;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  flex: none;
+}
+
+.lineExtras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.conflict {
+  @include text(sm);
+
+  ul {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-4);
+  }
+}
+
+.invalidRow td {
+  background: var(--color-danger-soft);
+}
+
+.indent {
+  display: inline-block;
+}

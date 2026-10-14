@@ -1,0 +1,641 @@
+@use 'tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stackSm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.metrics {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.grid2 {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+
+  @include up(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.danger {
+  color: var(--color-danger-text);
+  font-weight: 500;
+}
+
+.note {
+  margin: 0;
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+.sectionTitle {
+  margin: 0;
+  @include text(sm, semibold);
+  color: var(--color-text);
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
+// ---- Progress ----------------------------------------------------------------
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.progressTrack {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.progressSm .progressTrack {
+  height: 6px;
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--color-primary);
+  transition: width 300ms ease;
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.progressOver {
+  background: var(--color-danger);
+}
+
+.progressValue {
+  flex: none;
+  min-width: 40px;
+  text-align: right;
+  @include text(xs, medium);
+  color: var(--color-text-secondary);
+  @include tabular-nums;
+}
+
+// ---- Portfolio cards ---------------------------------------------------------
+
+.cards {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr);
+
+  @include up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include up(xl) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.projectCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow var(--motion-fast, 120ms) ease, border-color var(--motion-fast, 120ms) ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    background: var(--project-color, var(--color-primary));
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+
+  div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  strong {
+    display: block;
+    @include text(md, semibold);
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  small {
+    @include text(xs);
+    color: var(--color-text-muted);
+  }
+}
+
+.cardStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  @include text(xs);
+
+  dt {
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    @include text(sm, medium);
+    color: var(--color-text);
+    @include tabular-nums;
+  }
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  @include text(xs);
+  color: var(--color-text-muted);
+
+  span {
+    @include truncate;
+  }
+}
+
+// ---- Kanban (mirrors sales/pipeline) ------------------------------------------
+
+.board {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-3);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-1);
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+
+  @include up(md) {
+    scroll-snap-type: x proximity;
+  }
+}
+
+.column {
+  flex: 0 0 min(85vw, 290px);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  max-height: calc(100vh - 260px);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--motion-fast, 120ms) ease, background-color var(--motion-fast, 120ms) ease;
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.columnOver {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.columnHeader {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    @include text(sm, semibold);
+    color: var(--color-text);
+  }
+}
+
+.columnName {
+  @include truncate;
+  min-width: 0;
+  flex: 1;
+}
+
+.count {
+  flex: none;
+  min-width: 22px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  @include text(xs, medium);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.cards2 {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.emptyColumn {
+  padding: var(--space-6) var(--space-3);
+  text-align: center;
+  @include text(xs);
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.card {
+  position: relative;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--motion-fast, 120ms) ease, transform var(--motion-fast, 120ms) ease, opacity var(--motion-fast, 120ms) ease;
+
+  &[draggable='true'] {
+    cursor: grab;
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.dropBefore::before,
+.dropAfter::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-primary);
+  pointer-events: none;
+}
+
+.dropBefore::before {
+  top: calc(var(--space-1) * -1 - 2px);
+}
+
+.dropAfter::after {
+  bottom: calc(var(--space-1) * -1 - 2px);
+}
+
+.dragging {
+  opacity: 0.5;
+  transform: rotate(1deg);
+
+  @include reduced-motion {
+    transform: none;
+  }
+}
+
+.pending {
+  opacity: 0.7;
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.cardTitle {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  @include text(sm, semibold);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+
+  &:hover {
+    color: var(--color-primary-text);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.cardLabels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  @include text(xs);
+  color: var(--color-text-muted);
+
+  > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+}
+
+.cardAssignee {
+  margin-left: auto;
+}
+
+// ---- Task drawer ---------------------------------------------------------------
+
+.activity {
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+.subtasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+
+    &:hover {
+      background: var(--color-surface-hover);
+    }
+  }
+}
+
+.subDone {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.comment {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.commentBody {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    @include text(xs);
+    color: var(--color-text-muted);
+
+    strong {
+      @include text(sm, semibold);
+      color: var(--color-text);
+    }
+  }
+
+  p {
+    margin: var(--space-1) 0 0;
+    @include text(sm);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+.labelChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+// ---- Overview ------------------------------------------------------------------
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  @include text(sm);
+
+  span {
+    color: var(--color-text-muted);
+  }
+
+  strong {
+    font-weight: 600;
+    @include tabular-nums;
+  }
+}
+
+.overdueList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-divider);
+    @include text(sm);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.linkBtn {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  color: var(--color-text);
+  @include truncate;
+
+  &:hover {
+    color: var(--color-primary-text);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.milestoneRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-divider);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.memberRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-divider);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  > div {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    strong {
+      @include text(sm, semibold);
+      @include truncate;
+    }
+
+    span {
+      @include text(xs);
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+.colorInput {
+  width: 44px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+}

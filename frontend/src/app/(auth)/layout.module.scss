@@ -1,0 +1,88 @@
+@use 'tokens' as *;
+
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: var(--color-bg);
+
+  @include up(lg) {
+    grid-template-columns: minmax(360px, 5fr) 7fr;
+  }
+}
+
+.brandPanel {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-10);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+
+  @include up(lg) {
+    display: flex;
+  }
+}
+
+.brandTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: #fff;
+  @include text(lg, semibold);
+
+  svg {
+    color: var(--sidebar-accent);
+  }
+}
+
+.brandBody {
+  h2 {
+    @include text(2xl, semibold, tight);
+    color: #fff;
+    max-width: 420px;
+    margin-bottom: var(--space-8);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    @include text(base, medium);
+
+    svg {
+      color: var(--sidebar-accent);
+      flex-shrink: 0;
+    }
+  }
+}
+
+.brandFoot {
+  @include text(xs);
+  color: var(--sidebar-text-muted);
+}
+
+.formPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--gutter);
+
+  @include up(md) {
+    padding: var(--space-10);
+  }
+}
+
+.formInner {
+  width: 100%;
+  max-width: 420px;
+}

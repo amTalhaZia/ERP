@@ -1,0 +1,174 @@
+@use 'tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--space-4);
+
+  @include up(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include up(xl) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+
+  @include up(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+
+  @include up(lg) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  @include text(sm, medium);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li + li {
+    border-top: 1px solid var(--color-divider);
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--color-surface-hover);
+    }
+  }
+}
+
+.listMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.listTitle {
+  @include text(sm, medium);
+  @include truncate;
+  color: var(--color-text);
+}
+
+.listSub {
+  @include text(xs);
+  color: var(--color-text-muted);
+  @include truncate;
+}
+
+.listRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  @include text(sm, semibold);
+}
+
+.lowStock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  @include text(sm, semibold);
+  color: var(--color-warning-text);
+}
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  li {
+    display: grid;
+    grid-template-columns: minmax(90px, 160px) 1fr 40px;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}
+
+.barLabel {
+  @include text(sm);
+  @include truncate;
+  color: var(--color-text-secondary);
+}
+
+.barTrack {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--chart-1);
+  transition: width var(--motion-slow) var(--ease);
+}
+
+.barValue {
+  @include text(sm, semibold);
+  text-align: right;
+}
+
+.activity {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+
+  li {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}

@@ -1,0 +1,171 @@
+@use 'tokens' as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    box-shadow var(--motion-base) var(--ease),
+    border-color var(--motion-base) var(--ease);
+
+  @include up(lg) {
+    padding: var(--space-5);
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.interactive {
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.label {
+  @include text(sm, medium, snug);
+  color: var(--color-text-muted);
+  @include truncate;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.valueRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.value {
+  @include text(2xl, semibold, tight);
+  @include tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  @include up(lg) {
+    font-size: var(--text-3xl);
+  }
+}
+
+.sparkline {
+  flex: 0 0 auto;
+  width: 120px;
+  height: 32px;
+  overflow: visible;
+
+  @include down(sm) {
+    width: 90px;
+  }
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  @include text(xs, regular, snug);
+  color: var(--color-text-muted);
+}
+
+.change {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 6px 1px 4px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  @include tabular-nums;
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral-text);
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+.good {
+  background: var(--color-success-soft);
+  color: var(--color-success-text);
+}
+
+.bad {
+  background: var(--color-danger-soft);
+  color: var(--color-danger-text);
+}
+
+.flat {
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral-text);
+}
+
+.compare {
+  @include truncate;
+}
+
+.unavailable {
+  @include text(sm, regular, snug);
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+  font-style: italic;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: 2px;
+}
+
+.footer {
+  @include text(xs, regular, snug);
+  color: var(--color-text-muted);
+  margin-top: auto;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-divider);
+}
+
+.srOnly {
+  @include visually-hidden;
+}

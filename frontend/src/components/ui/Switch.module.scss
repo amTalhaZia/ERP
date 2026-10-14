@@ -1,0 +1,108 @@
+@use 'tokens' as *;
+
+.root {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  color: var(--color-text);
+}
+
+.label-start {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  --w: 36px;
+  --h: 20px;
+  --pad: 2px;
+  width: var(--w);
+  height: var(--h);
+  padding: var(--pad);
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+  cursor: pointer;
+  transition: background-color var(--motion-base) var(--ease);
+  margin-top: calc((1.5em - var(--h)) / 2);
+
+  &:hover:not(:disabled) {
+    background: var(--color-text-muted);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  @include down(md) {
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+    }
+  }
+}
+
+.sm {
+  --w: 30px;
+  --h: 16px;
+}
+
+.thumb {
+  display: block;
+  width: calc(var(--h) - var(--pad) * 2);
+  height: calc(var(--h) - var(--pad) * 2);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transform: translateX(0);
+  transition: transform var(--motion-base) var(--ease);
+}
+
+.on {
+  background: var(--color-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+
+  .thumb {
+    transform: translateX(calc(var(--w) - var(--h)));
+  }
+}
+
+.invalid {
+  box-shadow: 0 0 0 2px var(--color-danger-soft);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  @include text(base, regular, normal);
+  cursor: pointer;
+}
+
+.description {
+  @include text(sm, regular, snug);
+  color: var(--color-text-muted);
+}
+
+.disabled {
+  color: var(--color-text-disabled);
+
+  .label {
+    cursor: not-allowed;
+  }
+}

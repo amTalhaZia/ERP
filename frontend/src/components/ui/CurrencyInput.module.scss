@@ -1,0 +1,12 @@
+@use 'tokens' as *;
+
+.input {
+  @include tabular-nums;
+  text-align: right;
+}
+
+.symbol {
+  @include text(sm, medium);
+  color: var(--color-text-muted);
+  min-width: 1.2em;
+}

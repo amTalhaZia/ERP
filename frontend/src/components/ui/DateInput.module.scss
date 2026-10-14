@@ -1,0 +1,26 @@
+@use 'tokens' as *;
+@use './control' as *;
+
+.input {
+  @include tabular-nums;
+  min-width: 0;
+
+  // Normalise WebKit's internal date field layout.
+  &::-webkit-datetime-edit {
+    padding: 0;
+  }
+
+  &::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.4em;
+  }
+}
+
+.picker {
+  @include control-inline-button;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

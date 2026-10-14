@@ -1,0 +1,99 @@
+@use 'tokens' as *;
+
+// Print-friendly document view (window.print). The app chrome (sidebar, topbar)
+// is hidden only while a page containing `.printRoot` is printed.
+
+.printRoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.printOnly {
+  display: none;
+}
+
+.printHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-4);
+
+  h1 {
+    margin: 0;
+    font-size: 22pt;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 2px 0;
+  }
+}
+
+.printMeta {
+  text-align: right;
+}
+
+.printParty {
+  margin-bottom: var(--space-4);
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #555;
+  }
+}
+
+.printNotes {
+  margin-top: var(--space-6);
+  white-space: pre-wrap;
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #555;
+  }
+}
+
+@media print {
+  .printOnly {
+    display: block;
+  }
+
+  .noPrint {
+    display: none !important;
+  }
+
+  .printRoot {
+    color: #000;
+    font-size: 10pt;
+  }
+
+  .printRoot :global(table) {
+    min-width: 0 !important;
+  }
+
+  .printRoot :global(th),
+  .printRoot :global(td) {
+    padding: 4px 6px !important;
+  }
+
+  :global(body):has(.printRoot) :global(aside),
+  :global(body):has(.printRoot) :global(header:not(main header)) {
+    display: none !important;
+  }
+
+  :global(body):has(.printRoot) :global(div:has(> main)) {
+    padding-left: 0 !important;
+  }
+
+  :global(body):has(.printRoot) :global(main) {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+}

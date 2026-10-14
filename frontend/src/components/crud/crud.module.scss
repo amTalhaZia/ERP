@@ -1,0 +1,157 @@
+@use 'tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.search {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+.linkBtn {
+  color: var(--color-primary-text);
+  @include text(sm, medium);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.formError {
+  margin-bottom: var(--space-4);
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+
+  @include up(lg) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: minmax(120px, 40%) 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  @include text(sm);
+
+  dt {
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--color-text);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  @include text(sm, medium);
+}
+
+.num {
+  @include tabular-nums;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.cellMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  strong {
+    font-weight: 600;
+    color: var(--color-text);
+    @include truncate;
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+    @include truncate;
+  }
+}
+
+.lines {
+  width: 100%;
+  border-collapse: collapse;
+  @include text(sm);
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-divider);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    @include text(xs, semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--color-bg-subtle);
+  }
+
+  .r {
+    text-align: right;
+    @include tabular-nums;
+  }
+
+  tfoot td {
+    font-weight: 600;
+    border-bottom: 0;
+  }
+}
+
+.tableScroll {
+  overflow-x: auto;
+  margin: 0 calc(var(--space-4) * -1);
+  padding: 0 var(--space-4);
+}
+
+.totals {
+  margin-left: auto;
+  width: min(100%, 320px);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2) var(--space-6);
+  @include text(sm);
+
+  span:nth-child(odd) {
+    color: var(--color-text-muted);
+  }
+
+  span:nth-child(even) {
+    text-align: right;
+    @include tabular-nums;
+    font-weight: 500;
+  }
+
+  .grand {
+    @include text(md, semibold);
+    color: var(--color-text) !important;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+  }
+}

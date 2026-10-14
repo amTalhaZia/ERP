@@ -1,0 +1,64 @@
+@use 'tokens' as *;
+@use './control' as *;
+
+.wrapper {
+  @include control-surface;
+  position: relative;
+  gap: var(--space-2);
+  padding-right: 0;
+}
+
+.auto {
+  width: auto;
+}
+
+.sm {
+  @include control-size(sm);
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  @include control-size(md);
+}
+
+.lg {
+  @include control-size(lg);
+}
+
+.select {
+  @include control-native;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  // Placeholder option selected → muted text.
+  &:has(option[value='']:checked) {
+    color: var(--color-text-muted);
+  }
+
+  option {
+    color: var(--color-text);
+    background: var(--color-surface);
+  }
+}
+
+.adornment {
+  @include control-adornment;
+}
+
+.leading {
+  margin-left: -2px;
+}
+
+.chevron {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}

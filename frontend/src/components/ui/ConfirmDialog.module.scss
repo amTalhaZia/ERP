@@ -1,0 +1,48 @@
+@use 'tokens' as *;
+
+.dialog {
+  // Body may be empty for simple confirms — collapse it.
+  > :nth-child(2):empty {
+    display: none;
+  }
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.destructive {
+  background: var(--color-danger-soft);
+  color: var(--color-danger-text);
+}
+
+.typeToConfirm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: var(--space-3);
+}
+
+.typeLabel {
+  @include text(sm, regular, snug);
+  color: var(--color-text-secondary);
+}
+
+.typeTarget {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: all;
+}

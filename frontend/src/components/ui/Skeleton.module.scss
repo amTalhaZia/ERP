@@ -1,0 +1,119 @@
+@use 'tokens' as *;
+
+// Same keyframes as the global `shimmer` in globals.scss, declared locally so the
+// CSS-module pipeline (webpack or Turbopack) resolves the animation name reliably.
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton) 0%,
+    var(--color-skeleton) 35%,
+    var(--color-skeleton-shine) 50%,
+    var(--color-skeleton) 65%,
+    var(--color-skeleton) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: var(--radius-sm);
+
+  @include reduced-motion {
+    animation: none;
+    background: var(--color-skeleton);
+  }
+}
+
+.block {
+  display: block;
+  width: 100%;
+  min-height: 1em;
+  border-radius: var(--radius-md);
+}
+
+.text {
+  display: block;
+  width: 100%;
+  height: 0.85em;
+  border-radius: var(--radius-xs);
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+// ----- Table
+.table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  height: 44px;
+  border-bottom: 1px solid var(--color-divider);
+
+  > .text {
+    height: 10px;
+  }
+}
+
+.dense .row {
+  height: 36px;
+}
+
+.headerRow {
+  height: 40px;
+  background: var(--color-bg-subtle);
+
+  > .text {
+    height: 8px;
+  }
+}
+
+// ----- Card
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cardTitle {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

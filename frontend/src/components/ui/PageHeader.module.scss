@@ -1,0 +1,116 @@
+@use 'tokens' as *;
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  margin-bottom: var(--space-5);
+
+  @include up(lg) {
+    margin-bottom: var(--space-6);
+  }
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  @include text(sm, medium);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+
+  &:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.text {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.title {
+  @include text(xl, semibold, tight);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  @include up(md) {
+    font-size: var(--text-2xl);
+  }
+}
+
+.meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.description {
+  @include text(sm, regular, normal);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+  max-width: 720px;
+
+  @include up(md) {
+    font-size: var(--text-base);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+
+  @include down(md) {
+    width: 100%;
+
+    > * {
+      flex: 1 1 auto;
+    }
+  }
+}
+
+.below {
+  min-width: 0;
+}

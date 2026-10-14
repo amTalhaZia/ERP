@@ -1,0 +1,36 @@
+@use 'tokens' as *;
+
+.shell {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: padding-left var(--motion-slow) var(--ease);
+
+  @include up(lg) {
+    padding-left: var(--sidebar-width);
+  }
+}
+
+.shellCollapsed .main {
+  @include up(lg) {
+    padding-left: var(--sidebar-collapsed);
+  }
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--gutter) var(--space-12);
+  outline: none;
+
+  @include up(md) {
+    padding: var(--space-6) var(--gutter-lg) var(--space-12);
+  }
+}

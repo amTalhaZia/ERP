@@ -1,0 +1,253 @@
+@use 'tokens' as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.inline {
+  @include up(md) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-4);
+
+    .labelRow {
+      flex: 0 0 200px;
+      padding-top: 9px; // align with 36px control text baseline
+    }
+
+    .control {
+      flex: 1 1 auto;
+    }
+  }
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.label {
+  @include text(sm, medium, snug);
+  color: var(--color-text);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.optional {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.labelAction {
+  @include text(sm, medium);
+  flex: 0 0 auto;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hint {
+  @include text(xs, regular, snug);
+  color: var(--color-text-muted);
+}
+
+.error {
+  @include text(xs, medium, snug);
+  color: var(--color-danger-text);
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+// ----- Spans (inside .grid)
+.span-1 {
+  grid-column: span 1;
+}
+.span-2 {
+  grid-column: span 2;
+}
+.span-3 {
+  grid-column: span 3;
+}
+.span-4 {
+  grid-column: span 4;
+}
+.span-full {
+  grid-column: 1 / -1;
+}
+
+// ----- Grid
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+
+  // Stack everything below md regardless of spans.
+  @include down(md) {
+    > * {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+@include up(md) {
+  .cols-1 {
+    grid-template-columns: 1fr;
+  }
+  .cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+// ----- Row
+.row {
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  @include up(md) {
+    flex-direction: row;
+  }
+}
+
+.align-start {
+  align-items: flex-start;
+}
+.align-end {
+  align-items: flex-end;
+}
+.align-center {
+  align-items: center;
+}
+
+.gap-sm {
+  gap: var(--space-3);
+}
+.gap-md {
+  gap: var(--space-4);
+}
+.gap-lg {
+  gap: var(--space-6);
+}
+
+// ----- Section
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--color-divider);
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+.sectionHeader {
+  max-width: 640px;
+}
+
+.sectionTitle {
+  @include text(md, semibold, snug);
+}
+
+.sectionDescription {
+  @include text(sm, regular, snug);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// ----- Actions bar
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-4);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+
+  @include down(md) {
+    flex-wrap: wrap;
+  }
+}
+
+.sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
+
+  // Edge-to-edge on phones, with safe-area padding.
+  @include down(md) {
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    border-radius: 0;
+  }
+}
+
+.actions-end {
+  justify-content: flex-end;
+}
+.actions-start {
+  justify-content: flex-start;
+}
+.actions-between {
+  justify-content: space-between;
+}
+
+.secondary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.primary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+
+  @include down(sm) {
+    width: 100%;
+    > * {
+      flex: 1 1 0;
+    }
+  }
+}
+
+.actions-start .primary {
+  margin-left: 0;
+}

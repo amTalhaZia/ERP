@@ -1,0 +1,23 @@
+@use 'tokens' as *;
+@use './control' as *;
+
+.wrapper {
+  @include control-surface;
+  align-items: stretch;
+  padding: 0;
+}
+
+.textarea {
+  @include control-native;
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 72px;
+}
+
+.autoResize {
+  resize: none;
+  overflow-y: hidden;
+}

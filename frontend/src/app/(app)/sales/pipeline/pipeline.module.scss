@@ -1,0 +1,237 @@
+@use 'tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.board {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-3);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-1);
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+
+  @include up(md) {
+    scroll-snap-type: x proximity;
+  }
+}
+
+.column {
+  flex: 0 0 min(85vw, 300px);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  max-height: calc(100vh - 220px);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--motion-fast, 120ms) ease, background-color var(--motion-fast, 120ms) ease;
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.columnOver {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.columnHeader {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    @include text(sm, semibold);
+    color: var(--color-text);
+  }
+}
+
+.columnName {
+  @include truncate;
+  min-width: 0;
+  flex: 1;
+}
+
+.count {
+  flex: none;
+  min-width: 22px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  @include text(xs, medium);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.columnTotal {
+  margin-top: var(--space-1);
+  @include text(xs);
+  color: var(--color-text-muted);
+  @include tabular-nums;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.emptyColumn {
+  padding: var(--space-6) var(--space-3);
+  text-align: center;
+  @include text(xs);
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.card {
+  position: relative;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--motion-fast, 120ms) ease, transform var(--motion-fast, 120ms) ease, opacity var(--motion-fast, 120ms) ease;
+
+  &[draggable='true'] {
+    cursor: grab;
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.dragging {
+  opacity: 0.5;
+  transform: rotate(1deg);
+
+  @include reduced-motion {
+    transform: none;
+  }
+}
+
+.pending {
+  opacity: 0.7;
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.cardTitle {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  @include text(sm, semibold);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+
+  &:hover {
+    color: var(--color-primary-text);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.cardCustomer {
+  margin-top: 2px;
+  @include text(xs);
+  color: var(--color-text-muted);
+  @include truncate;
+}
+
+.cardValue {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  @include text(sm, semibold);
+  @include tabular-nums;
+
+  small {
+    @include text(xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+.overdue {
+  color: var(--color-danger-text);
+  font-weight: 500;
+}
+
+.owner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  @include truncate;
+}
+
+.srOnly {
+  @include visually-hidden;
+}

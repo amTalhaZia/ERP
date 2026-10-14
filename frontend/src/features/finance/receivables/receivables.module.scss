@@ -1,0 +1,204 @@
+@use 'tokens' as *;
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+}
+
+.cellStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.fieldError {
+  color: var(--color-danger-text);
+  @include text(xs);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  @include text(xs);
+}
+
+.num {
+  text-align: right;
+  @include tabular-nums;
+  white-space: nowrap;
+}
+
+.danger {
+  color: var(--color-danger-text);
+  font-weight: 600;
+}
+
+.success {
+  color: var(--color-success-text);
+  font-weight: 600;
+}
+
+.linesFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: var(--space-4);
+}
+
+.invalidRow td {
+  background: var(--color-danger-soft);
+}
+
+.allocTable {
+  width: 100%;
+  border-collapse: collapse;
+  @include text(sm);
+
+  th,
+  td {
+    padding: var(--space-2);
+    border-bottom: 1px solid var(--color-divider);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    @include text(xs, semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  tfoot td {
+    font-weight: 600;
+    border-bottom: 0;
+  }
+}
+
+.allocStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.fileCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 140px;
+
+  input[type='file'] {
+    display: none;
+  }
+}
+
+.linkBtn {
+  color: var(--color-primary-text);
+  @include text(sm, medium);
+  text-align: left;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.agingTable {
+  width: 100%;
+  border-collapse: collapse;
+  @include text(sm);
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-divider);
+    text-align: right;
+    @include tabular-nums;
+    white-space: nowrap;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+    white-space: normal;
+  }
+
+  th {
+    @include text(xs, semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--color-bg-subtle);
+  }
+
+  tfoot td {
+    font-weight: 600;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 0;
+  }
+}
+
+.scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.statementHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+
+  h3 {
+    margin: 0;
+    @include text(lg, semibold);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-muted);
+    @include text(sm);
+  }
+}
+
+@media print {
+  .controls,
+  .noPrint {
+    display: none !important;
+  }
+}

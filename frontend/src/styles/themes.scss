@@ -1,0 +1,213 @@
+@use 'sass:map';
+@use 'tokens' as *;
+
+// ---------------------------------------------------------------------------
+// Emit non-colour tokens once.
+// ---------------------------------------------------------------------------
+:root {
+  @each $k, $v in $space {
+    --space-#{$k}: #{$v};
+  }
+  @each $k, $v in $radius {
+    --radius-#{$k}: #{$v};
+  }
+  @each $k, $v in $layout {
+    --#{$k}: #{$v};
+  }
+  @each $k, $v in $z {
+    --z-#{$k}: #{$v};
+  }
+  @each $k, $v in $font-size {
+    --text-#{$k}: #{$v};
+  }
+
+  --motion-fast: #{map.get($motion, fast)};
+  --motion-base: #{map.get($motion, base)};
+  --motion-slow: #{map.get($motion, slow)};
+  --ease: #{map.get($motion, ease)};
+  --ease-out: #{map.get($motion, ease-out)};
+  --ease-in-out: #{map.get($motion, ease-in-out)};
+
+  color-scheme: light;
+}
+
+// ---------------------------------------------------------------------------
+// Light theme (default)
+// ---------------------------------------------------------------------------
+@mixin theme-light {
+  --color-bg: #{c($slate, 50)};
+  --color-bg-subtle: #{c($slate, 100)};
+  --color-surface: #ffffff;
+  --color-surface-hover: #{c($slate, 50)};
+  --color-surface-raised: #ffffff;
+  --color-border: #{c($slate, 200)};
+  --color-border-strong: #{c($slate, 300)};
+  --color-divider: #{c($slate, 100)};
+
+  --color-text: #{c($slate, 900)};
+  --color-text-secondary: #{c($slate, 600)};
+  --color-text-muted: #{c($slate, 500)};
+  --color-text-disabled: #{c($slate, 400)};
+  --color-text-inverse: #ffffff;
+
+  --color-primary: #{c($indigo, 600)};
+  --color-primary-hover: #{c($indigo, 700)};
+  --color-primary-active: #{c($indigo, 800)};
+  --color-primary-soft: #{c($indigo, 50)};
+  --color-primary-soft-border: #{c($indigo, 200)};
+  --color-primary-text: #{c($indigo, 700)};
+  --color-on-primary: #ffffff;
+
+  --color-accent: #{c($teal, 600)};
+  --color-accent-soft: #{c($teal, 50)};
+
+  --color-success: #{c($green, 600)};
+  --color-success-soft: #{c($green, 50)};
+  --color-success-text: #{c($green, 700)};
+  --color-warning: #{c($amber, 500)};
+  --color-warning-soft: #{c($amber, 50)};
+  --color-warning-text: #{c($amber, 700)};
+  --color-danger: #{c($red, 600)};
+  --color-danger-hover: #{c($red, 700)};
+  --color-danger-soft: #{c($red, 50)};
+  --color-danger-text: #{c($red, 700)};
+  --color-info: #{c($sky, 600)};
+  --color-info-soft: #{c($sky, 50)};
+  --color-info-text: #{c($sky, 700)};
+  --color-neutral-soft: #{c($slate, 100)};
+  --color-neutral-text: #{c($slate, 600)};
+
+  --color-focus: #{c($indigo, 500)};
+  --color-overlay: rgba(15, 23, 42, 0.45);
+  --color-skeleton: #{c($slate, 200)};
+  --color-skeleton-shine: #{c($slate, 100)};
+
+  // Sidebar is always dark regardless of theme.
+  --sidebar-bg: #{c($navy, 900)};
+  --sidebar-bg-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-bg-active: rgba(99, 102, 241, 0.18);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: #{c($slate, 300)};
+  --sidebar-text-muted: #{c($slate, 500)};
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #{c($indigo, 400)};
+
+  // Charts — categorical sequence (used by Recharts wrappers).
+  --chart-1: #{c($indigo, 500)};
+  --chart-2: #{c($teal, 500)};
+  --chart-3: #{c($amber, 500)};
+  --chart-4: #{c($sky, 500)};
+  --chart-5: #{c($violet, 500)};
+  --chart-6: #{c($red, 500)};
+  --chart-grid: #{c($slate, 200)};
+  --chart-axis: #{c($slate, 500)};
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
+  --shadow-focus: 0 0 0 3px #{rgba(c($indigo, 500), 0.25)};
+}
+
+// ---------------------------------------------------------------------------
+// Dark theme
+// ---------------------------------------------------------------------------
+@mixin theme-dark {
+  color-scheme: dark;
+
+  --color-bg: #{c($slate, 950)};
+  --color-bg-subtle: #{c($slate, 900)};
+  --color-surface: #{c($slate, 900)};
+  --color-surface-hover: #{c($slate, 800)};
+  --color-surface-raised: #{c($slate, 800)};
+  --color-border: #{c($slate, 800)};
+  --color-border-strong: #{c($slate, 700)};
+  --color-divider: #{c($slate, 800)};
+
+  --color-text: #{c($slate, 100)};
+  --color-text-secondary: #{c($slate, 300)};
+  --color-text-muted: #{c($slate, 400)};
+  --color-text-disabled: #{c($slate, 600)};
+  --color-text-inverse: #{c($slate, 900)};
+
+  --color-primary: #{c($indigo, 500)};
+  --color-primary-hover: #{c($indigo, 400)};
+  --color-primary-active: #{c($indigo, 300)};
+  --color-primary-soft: rgba(99, 102, 241, 0.14);
+  --color-primary-soft-border: rgba(99, 102, 241, 0.35);
+  --color-primary-text: #{c($indigo, 300)};
+  --color-on-primary: #ffffff;
+
+  --color-accent: #{c($teal, 500)};
+  --color-accent-soft: rgba(20, 184, 166, 0.14);
+
+  --color-success: #{c($green, 500)};
+  --color-success-soft: rgba(16, 185, 129, 0.14);
+  --color-success-text: #6ee7b7;
+  --color-warning: #{c($amber, 500)};
+  --color-warning-soft: rgba(245, 158, 11, 0.14);
+  --color-warning-text: #fcd34d;
+  --color-danger: #{c($red, 500)};
+  --color-danger-hover: #f87171;
+  --color-danger-soft: rgba(239, 68, 68, 0.14);
+  --color-danger-text: #fca5a5;
+  --color-info: #{c($sky, 500)};
+  --color-info-soft: rgba(14, 165, 233, 0.14);
+  --color-info-text: #7dd3fc;
+  --color-neutral-soft: #{c($slate, 800)};
+  --color-neutral-text: #{c($slate, 300)};
+
+  --color-focus: #{c($indigo, 400)};
+  --color-overlay: rgba(2, 6, 23, 0.65);
+  --color-skeleton: #{c($slate, 800)};
+  --color-skeleton-shine: #{c($slate, 700)};
+
+  --sidebar-bg: #{c($navy, 950)};
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+
+  --chart-1: #{c($indigo, 500)};
+  --chart-2: #{c($teal, 600)};
+  --chart-3: #{c($amber, 600)};
+  --chart-4: #{c($sky, 600)};
+  --chart-5: #{c($violet, 500)};
+  --chart-6: #{c($red, 500)};
+  --chart-grid: #{c($slate, 800)};
+  --chart-axis: #{c($slate, 400)};
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow-focus: 0 0 0 3px rgba(129, 140, 248, 0.35);
+}
+
+// ---------------------------------------------------------------------------
+// High-contrast overlay (applies on top of either theme)
+// ---------------------------------------------------------------------------
+@mixin theme-high-contrast {
+  --color-border: var(--color-text-secondary);
+  --color-border-strong: var(--color-text);
+  --color-text-muted: var(--color-text-secondary);
+  --color-focus: #ffbf00;
+  --shadow-focus: 0 0 0 3px #ffbf00;
+}
+
+:root,
+:root[data-theme='light'] {
+  @include theme-light;
+}
+
+:root[data-theme='dark'] {
+  @include theme-dark;
+}
+
+// Follow OS preference until the user picks explicitly.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include theme-dark;
+  }
+}
+
+:root[data-contrast='high'] {
+  @include theme-high-contrast;
+}

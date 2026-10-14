@@ -1,0 +1,89 @@
+@use 'tokens' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+  --badge-fg: var(--color-neutral-text);
+  --badge-bg: var(--color-neutral-soft);
+  --badge-dot: var(--color-text-muted);
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+}
+
+.md {
+  @include text(xs, medium, tight);
+  padding: 4px 8px;
+  min-height: 22px;
+}
+
+.sm {
+  font-size: 11px;
+  padding: 2px 6px;
+  min-height: 18px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--badge-dot);
+  flex: 0 0 auto;
+}
+
+.icon {
+  display: inline-flex;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.outline {
+  background: transparent;
+  border-color: currentColor;
+}
+
+.neutral {
+  --badge-fg: var(--color-neutral-text);
+  --badge-bg: var(--color-neutral-soft);
+  --badge-dot: var(--color-text-muted);
+}
+
+.success {
+  --badge-fg: var(--color-success-text);
+  --badge-bg: var(--color-success-soft);
+  --badge-dot: var(--color-success);
+}
+
+.warning {
+  --badge-fg: var(--color-warning-text);
+  --badge-bg: var(--color-warning-soft);
+  --badge-dot: var(--color-warning);
+}
+
+.danger {
+  --badge-fg: var(--color-danger-text);
+  --badge-bg: var(--color-danger-soft);
+  --badge-dot: var(--color-danger);
+}
+
+.info {
+  --badge-fg: var(--color-info-text);
+  --badge-bg: var(--color-info-soft);
+  --badge-dot: var(--color-info);
+}
+
+.primary {
+  --badge-fg: var(--color-primary-text);
+  --badge-bg: var(--color-primary-soft);
+  --badge-dot: var(--color-primary);
+}

@@ -1,0 +1,43 @@
+@use 'tokens' as *;
+
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  @include text(sm, medium);
+  background: var(--color-bg);
+}
+
+.icon {
+  color: var(--color-primary);
+}
+
+.bar {
+  width: 160px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  overflow: hidden;
+
+  span {
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-primary);
+    animation: slide 1.1s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(350%);
+  }
+}

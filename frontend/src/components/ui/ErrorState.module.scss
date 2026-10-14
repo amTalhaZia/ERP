@@ -1,0 +1,71 @@
+@use 'tokens' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-10) var(--space-6);
+  color: var(--color-text);
+}
+
+.sm {
+  padding: var(--space-6) var(--space-4);
+
+  .icon {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .title {
+    font-size: var(--text-base);
+  }
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.title {
+  @include text(md, semibold, snug);
+}
+
+.message {
+  @include text(sm, regular, normal);
+  color: var(--color-text-muted);
+  max-width: 440px;
+  margin-top: var(--space-1);
+}
+
+.code {
+  @include text(xs, regular);
+  margin-top: var(--space-2);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}

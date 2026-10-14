@@ -1,0 +1,65 @@
+@use 'tokens' as *;
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    overflow: hidden;
+
+    & + li {
+      border-top: 1px solid var(--color-divider);
+    }
+  }
+}
+
+.unread {
+  background: var(--color-primary-soft);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-primary);
+
+  .read & {
+    background: transparent;
+    border: 1px solid var(--color-border-strong);
+  }
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  @include text(base, semibold);
+  color: var(--color-text);
+}
+
+.text {
+  @include text(sm);
+  color: var(--color-text-secondary);
+}
+
+.time {
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}

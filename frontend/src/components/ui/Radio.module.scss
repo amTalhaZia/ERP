@@ -1,0 +1,136 @@
+@use 'tokens' as *;
+
+.group {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.vertical {
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+}
+
+.root {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--color-text);
+  --box: 16px;
+}
+
+.sm {
+  --box: 14px;
+}
+
+.control {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: var(--box);
+  height: var(--box);
+  margin-top: calc((1.5em - var(--box)) / 2);
+
+  @include down(md) {
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -12px;
+    }
+  }
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+  z-index: 1;
+}
+
+.circle {
+  display: grid;
+  place-items: center;
+  width: var(--box);
+  height: var(--box);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface);
+  transition:
+    border-color var(--motion-fast) var(--ease),
+    box-shadow var(--motion-fast) var(--ease);
+}
+
+.dot {
+  width: calc(var(--box) / 2);
+  height: calc(var(--box) / 2);
+  border-radius: 50%;
+  background: var(--color-primary);
+  transform: scale(0);
+  transition: transform var(--motion-fast) var(--ease);
+}
+
+.root:hover:not(.disabled) .circle {
+  border-color: var(--color-text-muted);
+}
+
+.input:checked ~ .circle {
+  border-color: var(--color-primary);
+
+  .dot {
+    transform: scale(1);
+  }
+}
+
+.input:focus-visible ~ .circle {
+  @include focus-ring;
+}
+
+.invalid .circle {
+  border-color: var(--color-danger);
+}
+
+.disabled {
+  cursor: not-allowed;
+  color: var(--color-text-disabled);
+
+  .circle {
+    background: var(--color-bg-subtle);
+    border-color: var(--color-border);
+  }
+
+  .dot {
+    background: var(--color-text-disabled);
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  @include text(base, regular, normal);
+}
+
+.sm .label {
+  font-size: var(--text-sm);
+}
+
+.description {
+  @include text(sm, regular, snug);
+  color: var(--color-text-muted);
+}

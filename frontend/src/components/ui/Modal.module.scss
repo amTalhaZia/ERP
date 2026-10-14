@@ -1,0 +1,154 @@
+@use 'tokens' as *;
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+
+  @include down(md) {
+    align-items: flex-end;
+    padding: 0;
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+  backdrop-filter: blur(2px);
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100dvh - var(--space-8));
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  outline: none;
+  overflow: hidden;
+
+  @include down(md) {
+    max-height: calc(100dvh - var(--space-6));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-bottom: 0;
+  }
+}
+
+.sm {
+  max-width: 400px;
+}
+.md {
+  max-width: 540px;
+}
+.lg {
+  max-width: 720px;
+}
+.xl {
+  max-width: 960px;
+}
+.full {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  border-radius: 0;
+  border: 0;
+
+  @include up(md) {
+    width: calc(100vw - var(--space-8));
+    height: calc(100dvh - var(--space-8));
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  padding-right: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+  flex: 0 0 auto;
+
+  @include down(md) {
+    padding: var(--space-4);
+    padding-right: var(--space-3);
+  }
+}
+
+.headerText {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-top: 2px;
+}
+
+.title {
+  @include text(lg, semibold, snug);
+  color: var(--color-text);
+}
+
+.description {
+  @include text(sm, regular, snug);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.close {
+  flex: 0 0 auto;
+  margin-top: -2px;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-5);
+  -webkit-overflow-scrolling: touch;
+
+  @include down(md) {
+    padding: var(--space-4);
+  }
+}
+
+.noPadding {
+  padding: 0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-bg-subtle);
+  flex: 0 0 auto;
+
+  @include down(md) {
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    flex-wrap: wrap;
+
+    > * {
+      flex: 1 1 0;
+    }
+  }
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  width: 100%;
+}

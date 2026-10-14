@@ -1,0 +1,55 @@
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# --- Secrets (never commit) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+deployment/secrets/
+
+# --- Frontend (Next.js) ---
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+frontend/.eslintcache
+frontend/playwright-report/
+frontend/test-results/
+
+# --- Backend (Laravel) ---
+backend/vendor/
+backend/node_modules/
+backend/public/storage
+backend/public/hot
+backend/storage/*.key
+backend/storage/app/private/*
+!backend/storage/app/private/.gitignore
+backend/storage/logs/*
+!backend/storage/logs/.gitignore
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/framework/testing/*
+backend/.phpunit.result.cache
+backend/.phpunit.cache/
+backend/Homestead.json
+backend/Homestead.yaml
+backend/auth.json
+
+# --- Local database / runtime (dev only) ---
+database/local/data/
+database/local/*.log
+database/local/*.pid
+
+# --- Misc ---
+*.log
+npm-debug.log*

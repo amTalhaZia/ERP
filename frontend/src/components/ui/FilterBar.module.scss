@@ -1,0 +1,66 @@
+@use 'tokens' as *;
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
+  flex: 1 1 auto;
+
+  // Filter controls should not stretch to full width inside the bar.
+  > * {
+    width: auto;
+    flex: 0 1 auto;
+    min-width: 140px;
+    max-width: 260px;
+  }
+}
+
+.clear {
+  min-width: 0;
+  margin-left: var(--space-1);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.mobile {
+  .actions {
+    flex: 1 1 auto;
+  }
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 11px;
+  font-weight: 600;
+  @include tabular-nums;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

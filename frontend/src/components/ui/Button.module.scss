@@ -1,0 +1,205 @@
+@use 'tokens' as *;
+@use './control' as *;
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--motion-base) var(--ease),
+    border-color var(--motion-base) var(--ease),
+    color var(--motion-base) var(--ease),
+    box-shadow var(--motion-base) var(--ease),
+    transform var(--motion-fast) var(--ease);
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0.5px);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.label {
+  @include truncate;
+}
+
+.icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.sm .icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.lg .icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+// ----- Sizes
+.sm {
+  @include control-size(sm);
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  @include control-size(md);
+}
+
+.lg {
+  @include control-size(lg);
+}
+
+.iconOnly {
+  padding-inline: 0;
+  aspect-ratio: 1;
+
+  &.sm {
+    width: control-height(sm);
+  }
+  &.md {
+    width: control-height(md);
+  }
+  &.lg {
+    width: control-height(lg);
+  }
+
+  @include down(md) {
+    &.sm,
+    &.md {
+      width: 40px;
+    }
+  }
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+// ----- Loading
+.loading .content {
+  visibility: hidden;
+}
+
+.spinnerWrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.srOnly {
+  @include visually-hidden;
+}
+
+// ----- Variants
+.primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-xs);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  &:active:not(:disabled) {
+    background: var(--color-primary-active);
+  }
+}
+
+.secondary {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary-soft-border);
+  }
+}
+
+.outline {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-xs);
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    border-color: var(--color-text-muted);
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+  }
+}
+
+.danger {
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-xs);
+
+  &:hover:not(:disabled) {
+    background: var(--color-danger-hover);
+  }
+}
+
+.link {
+  background: transparent;
+  color: var(--color-primary-text);
+  padding-inline: 0;
+  min-height: 0;
+  border-radius: var(--radius-xs);
+
+  &:hover:not(:disabled) {
+    text-decoration: underline;
+  }
+
+  @include down(md) {
+    min-height: 0;
+  }
+}

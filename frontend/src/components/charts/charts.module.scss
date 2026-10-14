@@ -1,0 +1,121 @@
+@use 'tokens' as *;
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.viewToggle {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+
+  &:hover {
+    color: var(--color-text);
+    background: var(--color-surface-hover);
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  list-style: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  @include text(sm, medium);
+  color: var(--color-text-secondary);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.tooltip {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-2) var(--space-3);
+  min-width: 160px;
+  @include text(sm);
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+.tooltipLabel {
+  @include text(xs, semibold);
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.tooltipName {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.tooltipValue {
+  @include tabular-nums;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.tableWrap {
+  overflow: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    @include text(sm);
+  }
+
+  th,
+  td {
+    padding: 6px var(--space-3);
+    border-bottom: 1px solid var(--color-divider);
+    text-align: left;
+  }
+
+  th {
+    @include text(xs, semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    position: sticky;
+    top: 0;
+    background: var(--color-surface);
+  }
+
+  td.num,
+  th.num {
+    text-align: right;
+    @include tabular-nums;
+  }
+}

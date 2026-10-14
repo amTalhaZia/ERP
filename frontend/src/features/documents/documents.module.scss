@@ -1,0 +1,396 @@
+@use 'tokens' as *;
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  min-width: 0;
+
+  @include up(lg) {
+    grid-template-columns: 260px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stackSm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.spacer {
+  flex: 1;
+}
+
+// ---- Folder tree -----------------------------------------------------------
+
+.treeCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+
+  @include up(lg) {
+    position: sticky;
+    top: var(--space-4);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
+
+.treeHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  @include text(xs, semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+
+  span {
+    flex: 1;
+  }
+}
+
+.treeToggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  @include text(sm, semibold);
+  color: var(--color-text);
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  @include up(lg) {
+    display: none;
+  }
+}
+
+.treeBody {
+  &[data-collapsed='true'] {
+    display: none;
+
+    @include up(lg) {
+      display: block;
+    }
+  }
+}
+
+.tree,
+.tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree ul {
+  padding-left: var(--space-4);
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--radius-md);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+
+  &[data-active='true'] {
+    background: var(--color-primary-soft);
+
+    .nodeLabel {
+      color: var(--color-primary-text);
+      font-weight: 600;
+    }
+  }
+}
+
+.caret {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition: transform var(--motion-fast, 120ms) ease;
+
+  &[aria-expanded='true'] {
+    transform: rotate(90deg);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.caretSpacer {
+  flex: none;
+  width: 22px;
+}
+
+.nodeLabel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1);
+  text-align: left;
+  @include text(sm);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+
+  span:first-of-type {
+    @include truncate;
+    min-width: 0;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.nodeCount {
+  margin-left: auto;
+  @include text(xs);
+  color: var(--color-text-muted);
+  @include tabular-nums;
+}
+
+.privateIcon {
+  flex: none;
+  color: var(--color-warning-text);
+}
+
+// ---- Drop zone ---------------------------------------------------------------
+
+.dropZone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  border: 2px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  @include text(sm);
+  cursor: pointer;
+  transition: border-color var(--motion-fast, 120ms) ease, background-color var(--motion-fast, 120ms) ease;
+
+  &:focus-within {
+    @include focus-ring;
+  }
+
+  &[data-over='true'] {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+  }
+
+  &[data-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+
+  &[data-compact='true'] {
+    padding: var(--space-3);
+  }
+
+  input {
+    @include visually-hidden;
+  }
+
+  strong {
+    color: var(--color-text);
+  }
+
+  small {
+    @include text(xs);
+    color: var(--color-text-muted);
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.fileChip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  @include text(sm);
+
+  span {
+    flex: 1;
+    min-width: 0;
+    @include truncate;
+  }
+
+  small {
+    color: var(--color-text-muted);
+    @include tabular-nums;
+  }
+}
+
+.allowed {
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+// ---- Lists ---------------------------------------------------------------------
+
+.roleList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-2);
+  max-height: 220px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.versionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-divider);
+    @include text(sm);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.versionNo {
+  flex: none;
+  min-width: 34px;
+  @include text(xs, semibold);
+  color: var(--color-text-secondary);
+}
+
+.versionMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-weight: 500;
+    @include truncate;
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+  }
+}
+
+.shareBox {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.note {
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+.linkedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    @include text(sm);
+  }
+}
+
+.fileIcon {
+  flex: none;
+  color: var(--color-text-muted);
+}
+
+.sectionTitle {
+  margin: 0;
+  @include text(sm, semibold);
+  color: var(--color-text);
+}
+
+.srOnly {
+  @include visually-hidden;
+}

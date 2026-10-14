@@ -1,0 +1,42 @@
+@use 'tokens' as *;
+
+.tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-tooltip);
+  max-width: 280px;
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  background: var(--color-text);
+  color: var(--color-text-inverse);
+  @include text(xs, medium, snug);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  word-wrap: break-word;
+}
+
+.arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+.tooltip[data-placement='top'] .arrow {
+  bottom: -4px;
+  left: calc(50% - 4px);
+}
+.tooltip[data-placement='bottom'] .arrow {
+  top: -4px;
+  left: calc(50% - 4px);
+}
+.tooltip[data-placement='left'] .arrow {
+  right: -4px;
+  top: calc(50% - 4px);
+}
+.tooltip[data-placement='right'] .arrow {
+  left: -4px;
+  top: calc(50% - 4px);
+}

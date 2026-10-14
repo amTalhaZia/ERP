@@ -1,0 +1,44 @@
+@use 'tokens' as *;
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  opacity: 0.9;
+  animation: spin 0.7s linear infinite;
+
+  @include reduced-motion {
+    animation-duration: 1.5s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+.xs {
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+}
+
+.sm {
+  width: 14px;
+  height: 14px;
+}
+
+.md {
+  width: 18px;
+  height: 18px;
+}
+
+.lg {
+  width: 26px;
+  height: 26px;
+  border-width: 3px;
+}

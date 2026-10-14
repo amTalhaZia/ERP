@@ -1,0 +1,156 @@
+@use 'sass:map';
+// Shared mixins for form controls and buttons. Partial — not a CSS module.
+//   @use './control' as *;
+@use 'tokens' as *;
+
+$control-height: (
+  sm: 30px,
+  md: 36px,
+  lg: 42px,
+);
+
+@function control-height($size) {
+  @return map.get($control-height, $size);
+}
+
+// Height + horizontal padding + font size per control size.
+// Touch targets grow to >= 40px below the md breakpoint.
+@mixin control-size($size) {
+  min-height: control-height($size);
+
+  @if $size == sm {
+    padding-inline: var(--space-2);
+    font-size: var(--text-sm);
+  } @else if $size == lg {
+    padding-inline: var(--space-4);
+    font-size: var(--text-md);
+  } @else {
+    padding-inline: var(--space-3);
+    font-size: var(--text-base);
+  }
+
+  @if $size != lg {
+    @include down(md) {
+      min-height: 40px;
+    }
+  }
+}
+
+// Base look for text-like inputs (the wrapper element).
+@mixin control-surface {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  transition:
+    border-color var(--motion-base) var(--ease),
+    box-shadow var(--motion-base) var(--ease),
+    background-color var(--motion-base) var(--ease);
+
+  &:hover:not(.disabled):not(.readOnly) {
+    border-color: var(--color-text-muted);
+  }
+
+  &:focus-within:not(.disabled):not(.readOnly) {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+  }
+
+  &.invalid {
+    border-color: var(--color-danger);
+
+    &:focus-within {
+      border-color: var(--color-danger);
+      box-shadow: 0 0 0 3px var(--color-danger-soft);
+    }
+  }
+
+  &.disabled {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  &.readOnly {
+    background: var(--color-bg-subtle);
+  }
+}
+
+// The native element inside the wrapper.
+@mixin control-native {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1.4;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// Leading / trailing adornments (icons, currency codes, clear buttons).
+@mixin control-adornment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  pointer-events: none;
+  white-space: nowrap;
+
+  > button,
+  > a,
+  > [role='button'] {
+    pointer-events: auto;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Small square button used inside controls (clear, stepper, picker).
+@mixin control-inline-button {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition:
+    background-color var(--motion-fast) var(--ease),
+    color var(--motion-fast) var(--ease);
+
+  &:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: 0;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}

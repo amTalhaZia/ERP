@@ -1,0 +1,127 @@
+@use 'tokens' as *;
+
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.summary {
+  @include text(sm, regular);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.num {
+  @include tabular-nums;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.perPage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.perPageLabel {
+  @include text(sm, regular);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+
+  @include down(sm) {
+    @include visually-hidden;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  list-style: none;
+  margin: 0 var(--space-1);
+  padding: 0;
+
+  @include down(md) {
+    display: none;
+  }
+}
+
+.page {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  @include text(sm, medium);
+  @include tabular-nums;
+  transition:
+    background-color var(--motion-fast) var(--ease),
+    color var(--motion-fast) var(--ease);
+
+  &:hover:not(:disabled):not(.current) {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.current {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+  border: 1px solid var(--color-primary-soft-border);
+}
+
+.ellipsis {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 30px;
+  color: var(--color-text-muted);
+}
+
+.compactLabel {
+  display: none;
+  @include text(sm, medium);
+  color: var(--color-text-secondary);
+  padding: 0 var(--space-2);
+  white-space: nowrap;
+
+  @include down(md) {
+    display: inline;
+  }
+}
+
+.edge {
+  @include down(sm) {
+    display: none;
+  }
+}
