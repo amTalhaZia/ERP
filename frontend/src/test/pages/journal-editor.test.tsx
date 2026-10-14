@@ -83,7 +83,8 @@ describe('Journal entry editor', () => {
     const user = userEvent.setup();
     vi.mocked(api.post).mockResolvedValue({ data: { data: { id: 99 } } });
     await renderNew();
-    await screen.findByRole('option', { name: '1000 · Cash' });
+    // Account options load from the mocked API (one per line select).
+    expect(await screen.findAllByRole('option', { name: /1000 . Cash/ })).toHaveLength(2);
     await user.selectOptions(screen.getByLabelText('Line 1 account'), '1');
     await user.selectOptions(screen.getByLabelText('Line 2 account'), '2');
     await user.type(screen.getByLabelText('Line 1 debit'), '250');
