@@ -136,7 +136,15 @@ trait SeedsDemoCompany
         return $sixMonths->max($this->fiscalStart())->copy();
     }
 
-    /** A date $days after $from, clamped into [historyStart, today]. */
+    /** A fictional phone number in the company's country format (block keeps numbers distinct per entity type). */
+    protected function phone(int $block): string
+    {
+        return strtoupper((string) $this->company->country) === 'PK'
+            ? fake()->numerify("+92 30{$block} 0######")
+            : fake()->numerify("+1 555 0{$block}## ####");
+    }
+
+    /** $date clamped into [historyStart, today]. */
     protected function clampDate(CarbonInterface $date): Carbon
     {
         $date = Carbon::parse($date);

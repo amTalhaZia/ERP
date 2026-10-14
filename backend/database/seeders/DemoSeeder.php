@@ -117,9 +117,10 @@ class DemoSeeder extends Seeder
             // Module demo data (each is optional and self-contained).
             foreach ([
                 'Database\\Seeders\\Demo\\HrDemoSeeder',
+                'Database\\Seeders\\Demo\\PayrollDemoSeeder',
                 'Database\\Seeders\\Demo\\InventoryDemoSeeder',
-                'Database\\Seeders\\Demo\\SalesDemoSeeder',
                 'Database\\Seeders\\Demo\\ProcurementDemoSeeder',
+                'Database\\Seeders\\Demo\\SalesDemoSeeder',
                 'Database\\Seeders\\Demo\\FinanceDemoSeeder',
                 'Database\\Seeders\\Demo\\ProjectsDemoSeeder',
             ] as $seeder) {
