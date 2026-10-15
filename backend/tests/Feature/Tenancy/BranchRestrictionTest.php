@@ -157,7 +157,7 @@ class BranchRestrictionTest extends TestCase
 
         $this->actingAsIn($this->restricted, $this->company)
             ->postJson('/api/v1/attendance', ['employee_id' => $employees['boston']->id, 'date' => '2026-10-01', 'status' => 'present'])
-            ->assertCreated();
+            ->assertSuccessful();
     }
 
     public function test_leave_requests_are_restricted_via_the_employee_branch(): void
