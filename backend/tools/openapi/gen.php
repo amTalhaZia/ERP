@@ -983,6 +983,7 @@ ksort($methodsBreakdown);
 $breakdown = implode(', ', array_map(fn ($k, $v) => "$k: $v", array_keys($methodsBreakdown), $methodsBreakdown));
 $pathCount = count($paths);
 
+$perPageDefault = (int) config('erp.pagination.default', 25);
 $description = <<<MD
 REST API of the Enterprise ERP (Laravel 13, Sanctum SPA authentication). Every route registered under `api/` is documented here:
 **{$total} routes** (`php artisan route:list --path=api --except-vendor`; {$breakdown}) → **{$opCount} operations** on **{$pathCount} paths**
@@ -1034,7 +1035,7 @@ Every error uses the envelope `{ "message": string, "code": string, "errors"?: {
 | 500 | `server.error` | Unexpected error (no stack traces unless APP_DEBUG). |
 
 ## Lists: pagination, search, sorting, filtering
-* `page` (≥1), `per_page` (default 15, max 100).
+* `page` (≥1), `per_page` (default {$perPageDefault}, max 100).
 * `search` — case-insensitive substring match on the allow-listed columns named in each operation.
 * `sort` — one column from the per-operation allow-list, `-` prefix for descending (e.g. `sort=-created_at`).
 * `filter[<column>]=value` — exact match; `filter[status]=draft,approved` or `filter[status][]=draft&filter[status][]=approved` matches any; booleans as `true`/`false`.

@@ -1,0 +1,16 @@
+{
+  "name": "erp-docs-build",
+  "private": true,
+  "type": "module",
+  "description": "Builds the PDF documentation (user guide with screenshots, API reference).",
+  "scripts": {
+    "screenshots": "node capture.mjs",
+    "guide": "node build-guide.mjs",
+    "api": "node build-api.mjs",
+    "all": "node capture.mjs && node build-guide.mjs && node build-api.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.48.2",
+    "yaml": "^2.5.1"
+  }
+}

@@ -54,7 +54,7 @@ info:
     | 500 | `server.error` | Unexpected error (no stack traces unless APP_DEBUG). |
 
     ## Lists: pagination, search, sorting, filtering
-    * `page` (≥1), `per_page` (default 15, max 100).
+    * `page` (≥1), `per_page` (default 25, max 100).
     * `search` — case-insensitive substring match on the allow-listed columns named in each operation.
     * `sort` — one column from the per-operation allow-list, `-` prefix for descending (e.g. `sort=-created_at`).
     * `filter[<column>]=value` — exact match; `filter[status]=draft,approved` or `filter[status][]=draft&filter[status][]=approved` matches any; booleans as `true`/`false`.
