@@ -120,7 +120,7 @@ class CompanyUserManagementTest extends TestCase
     public function test_inviting_a_new_email_creates_an_unverified_account_sends_reset_link_and_audits(): void
     {
         Notification::fake();
-        [$admin, $company] = $this->userWith(['users.manage']);
+        [$admin, $company] = $this->ownerWith(['users.manage']);
         $role = $this->roleWith($company, ['dashboard.view'], 'Viewer');
         $branch = Branch::factory()->for($company)->create();
 
@@ -150,7 +150,7 @@ class CompanyUserManagementTest extends TestCase
     public function test_inviting_an_existing_account_adds_a_membership_without_a_reset_link(): void
     {
         Notification::fake();
-        [$admin, $company] = $this->userWith(['users.manage']);
+        [$admin, $company] = $this->ownerWith(['users.manage']);
         $role = $this->roleWith($company, ['dashboard.view']);
         $existing = User::factory()->inCompany(Company::factory()->create())->create(['email' => 'existing@example.com']);
 
@@ -170,7 +170,7 @@ class CompanyUserManagementTest extends TestCase
     public function test_inviting_an_existing_member_returns_409(): void
     {
         Notification::fake();
-        [$admin, $company] = $this->userWith(['users.manage']);
+        [$admin, $company] = $this->ownerWith(['users.manage']);
         $role = $this->roleWith($company, ['dashboard.view']);
         $member = User::factory()->inCompany($company)->create();
 
@@ -184,7 +184,7 @@ class CompanyUserManagementTest extends TestCase
 
     public function test_invite_stores_a_database_notification_for_the_invited_user(): void
     {
-        [$admin, $company] = $this->userWith(['users.manage']);
+        [$admin, $company] = $this->ownerWith(['users.manage']);
         $role = $this->roleWith($company, ['dashboard.view']);
 
         $this->actingAsIn($admin, $company)
@@ -208,7 +208,7 @@ class CompanyUserManagementTest extends TestCase
 
     public function test_updates_roles_branches_and_activation_of_a_membership_and_audits_role_names(): void
     {
-        [$admin, $company] = $this->userWith(['users.manage']);
+        [$admin, $company] = $this->ownerWith(['users.manage']);
         $viewer = $this->roleWith($company, ['dashboard.view'], 'Viewer');
         $editor = $this->roleWith($company, ['branches.manage'], 'Editor');
         $branch = Branch::factory()->for($company)->create();
@@ -234,7 +234,7 @@ class CompanyUserManagementTest extends TestCase
 
     public function test_user_cannot_deactivate_themselves_or_drop_their_last_users_manage_role(): void
     {
-        [$admin, $company] = $this->userWith(['users.manage']);
+        [$admin, $company] = $this->ownerWith(['users.manage']);
         $viewer = $this->roleWith($company, ['dashboard.view'], 'Viewer');
 
         $this->actingAsIn($admin, $company)->putJson("/api/v1/users/{$admin->id}", ['is_active' => false])

@@ -168,17 +168,24 @@ Same as A.6. All eight verification steps from the brief are covered:
 * **phpMyAdmin** (optional): download the zip, point `config.inc.php` at
   `127.0.0.1`, serve with `php -S 127.0.0.1:8080 -t phpmyadmin/`. Only bind to
   localhost; never deploy it alongside production.
-* **In-app**: platform administrators get a read-only *System → Database*
-  page (`/platform/database`) that lists tables and row counts via the API —
-  no SQL console, no credentials.
+* **In-app**: platform administrators get a read-only **Platform → System**
+  page (`/platform/system`) with database reachability, table sizes and row
+  counts via the API — no SQL console, no credentials.
 
 ---
 
 ## Backups
 * Hosted: Aiven keeps automatic backups on paid plans only (free tier: none —
-  take your own). `php artisan backup:run` wraps `mysqldump` with the current
-  `.env` (TLS aware) and writes to `storage/app/private/backups/`.
-* Local: same command; schedule with Task Scheduler if desired.
+  take your own). There is no artisan backup command; use `mysqldump` with the
+  values from `.env` (see deployment/README.md §5):
+  ```bash
+  mysqldump --single-transaction --routines --triggers --ssl-ca=/srv/erp/backend/storage/certs/ca.pem \
+    -h "$DB_HOST" -P "$DB_PORT" -u "$DB_BACKUP_USER" -p"$DB_BACKUP_PASSWORD" erp | gzip > /backups/erp-$(date +%F).sql.gz
+  ```
+  Also back up `backend/storage/app/private` (uploaded documents) — it is not
+  in the database.
+* Local: the same command without `--ssl-ca` (e.g. `mysqldump -h 127.0.0.1 -u erp_app -p erp > erp.sql`);
+  schedule with Task Scheduler if desired.
 * Restore: `mysql --ssl-ca=… erp < backup.sql`, then `php artisan migrate` to
   apply any newer migrations. Never drop a production database to "fix" a
   migration; write a corrective migration instead.

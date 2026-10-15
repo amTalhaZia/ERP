@@ -53,7 +53,16 @@ database credentials or privileged logic; it only talks to `/api/v1`.
   `authorize()`. Tests in `tests/Feature/Tenancy` assert Company A cannot read,
   update, delete or export Company B records for every module.
 * Branch scoping: `branch_id` nullable on operational tables; users may have
-  `company_user.branch_ids` restriction enforced by `BranchScope`.
+  `company_user.branch_ids` restriction (NULL-branch rows stay visible) enforced
+  by `App\Support\Tenancy\RestrictsToAllowedBranches`: lists call
+  `->visibleBranches()`, policies check it via `canOn()` / `inAllowedBranch()`,
+  and inputs use `AccessibleBranch` / `WithinAccessibleBranch`. Models without a
+  `branch_id` derive it from a parent (attendance/leave → employee, sales order →
+  warehouse, stock → warehouse, GRN/return → purchase order).
+* Privilege escalation: only `company.owner` holders may assign/remove the owner
+  role, assign roles beyond their own permissions, edit a role they hold, or
+  grant permissions they lack (`App\Support\Access\PrivilegeEscalationGuard`,
+  403 `access.escalation_denied`).
 
 ## 4. Authorization (RBAC)
 

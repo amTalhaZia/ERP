@@ -83,6 +83,27 @@ abstract class TestCase extends BaseTestCase
         $user->forgetPermissionCache();
     }
 
+    /**
+     * Arrange a Company Owner (holds `company.owner`) who also holds the
+     * given permissions — owners are exempt from the privilege-escalation guard.
+     *
+     * @param  array<int, string>  $permissions
+     * @return array{0: User, 1: Company}
+     */
+    protected function ownerWith(array $permissions, ?Company $company = null): array
+    {
+        [$user, $company] = $this->userWith($permissions, $company);
+
+        $ownerRole = Role::query()->firstOrCreate(
+            ['company_id' => $company->id, 'slug' => 'company.owner'],
+            ['name' => 'Company Owner', 'is_system' => true],
+        );
+        $user->roles()->attach($ownerRole->id, ['company_id' => $company->id]);
+        $user->forgetPermissionCache();
+
+        return [$user, $company];
+    }
+
     protected function assertErrorCode(TestResponse $response, string $code): void
     {
         $response->assertJsonPath('code', $code);

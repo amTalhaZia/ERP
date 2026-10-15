@@ -120,7 +120,7 @@ class RoleManagementTest extends TestCase
 
     public function test_creates_a_role_with_permissions_and_audits_the_change(): void
     {
-        [$admin, $company] = $this->userWith(['roles.manage']);
+        [$admin, $company] = $this->ownerWith(['roles.manage']);
 
         $response = $this->actingAsIn($admin, $company)->postJson('/api/v1/roles', [
             'name' => 'Invoice Approver',
@@ -147,7 +147,7 @@ class RoleManagementTest extends TestCase
 
     public function test_updates_a_custom_role_and_audits_added_and_removed_slugs(): void
     {
-        [$admin, $company] = $this->userWith(['roles.manage']);
+        [$admin, $company] = $this->ownerWith(['roles.manage']);
         $role = Role::factory()->for($company)->create(['name' => 'Old']);
         $role->permissions()->sync([$this->permissionId('invoices.view')]);
 
@@ -164,7 +164,7 @@ class RoleManagementTest extends TestCase
 
     public function test_system_role_name_is_read_only_but_permissions_are_editable(): void
     {
-        [$admin, $company] = $this->userWith(['roles.manage']);
+        [$admin, $company] = $this->ownerWith(['roles.manage']);
         $role = $this->systemRole($company, 'accountant', 'Accountant');
 
         $this->actingAsIn($admin, $company)->putJson("/api/v1/roles/{$role->id}", ['name' => 'Bean Counter'])
