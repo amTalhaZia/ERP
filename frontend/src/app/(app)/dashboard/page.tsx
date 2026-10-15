@@ -8,15 +8,17 @@ import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 import {
-  AlertTriangle, ArrowRight, Boxes, CircleDollarSign, ClipboardList, Receipt, TrendingDown, TrendingUp, Users, Wallet,
+  AlertTriangle, ArrowRight, Boxes, CalendarDays, CircleDollarSign, ClipboardList, Clock, FileText, ListChecks, Receipt, TrendingDown, TrendingUp, Users, Wallet,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader, EmptyState, ErrorState, MetricCard, PageHeader, SegmentedControl, StatusBadge, Skeleton } from '@/components/ui';
 import { ChartCard } from '@/components/charts/ChartCard';
 import { ChartTooltip } from '@/components/charts/ChartTooltip';
-import { dashboardApi, type Metric } from '@/features/dashboard/api';
+import { dashboardApi, type DashboardPayload, type Metric } from '@/features/dashboard/api';
 import { useAppSelector } from '@/store';
 import { selectCompany, selectUser } from '@/store/sessionSlice';
 import { useCan } from '@/lib/auth/useCan';
+import type { Permission } from '@/lib/auth/permissions';
+import { isPlatformOnly } from '@/lib/auth/home';
 import { formatCompact, formatDate, formatMoney, formatNumber, formatRelative, humanize } from '@/lib/format';
 import styles from './dashboard.module.scss';
 
@@ -51,10 +53,50 @@ function num(v: string | number | null | undefined) {
   return v === null || v === undefined ? 0 : Number(v);
 }
 
+const QUICK_LINKS: { label: string; description: string; href: string; icon: typeof CalendarDays; permission: Permission[] }[] = [
+  { label: 'My leave', description: 'Balances and leave requests', href: '/hr/leave', icon: CalendarDays, permission: ['leave.request', 'leave.view'] },
+  { label: 'My payslips', description: 'Download your payslips', href: '/payroll/my-payslips', icon: FileText, permission: ['payslips.view.own'] },
+  { label: 'My tasks', description: 'Projects and assigned tasks', href: '/projects', icon: ListChecks, permission: ['tasks.view', 'projects.view'] },
+  { label: 'Attendance', description: 'Check-ins and timesheets', href: '/hr/attendance', icon: Clock, permission: ['attendance.view', 'attendance.manage'] },
+  { label: 'Expense claims', description: 'Submit and track expenses', href: '/finance/expenses', icon: Receipt, permission: ['expenses.submit', 'expenses.view'] },
+  { label: 'Approvals', description: 'Items waiting for your decision', href: '/approvals', icon: ClipboardList, permission: ['approvals.view'] },
+];
+
+/** Shown to roles with no dashboard analytics (e.g. employees): shortcuts to self-service pages. */
+function QuickLinks({ can }: { can: ReturnType<typeof useCan> }) {
+  const links = QUICK_LINKS.filter((l) => can(l.permission, 'any'));
+  return (
+    <Card>
+      <CardHeader title="Quick links" description="Jump to the things you use most." />
+      <CardBody>
+        {links.length === 0 ? (
+          <EmptyState size="sm" title="Nothing to show yet" description="Your role doesn’t include any dashboard content. Ask your administrator if you expected to see more." />
+        ) : (
+          <ul className={styles.quickLinks}>
+            {links.map(({ label, description, href, icon: Icon }) => (
+              <li key={href}>
+                <Link href={href}>
+                  <span className={styles.quickIcon} aria-hidden><Icon size={18} /></span>
+                  <span className={styles.listMain}>
+                    <span className={styles.listTitle}>{label}</span>
+                    <span className={styles.listSub}>{description}</span>
+                  </span>
+                  <ArrowRight size={16} aria-hidden />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardBody>
+    </Card>
+  );
+}
+
 export default function DashboardPage() {
   const can = useCan();
   const user = useAppSelector(selectUser);
   const company = useAppSelector(selectCompany);
+  const platformOnly = useAppSelector((s) => isPlatformOnly(s.session));
   const branchId = useAppSelector((s) => s.ui.branchId);
   const [range, setRange] = useState<RangeKey>('mtd');
   const dates = useMemo(() => rangeDates(range), [range]);
@@ -63,7 +105,7 @@ export default function DashboardPage() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['dashboard', company?.id, branchId, dates.from, dates.to],
     queryFn: () => dashboardApi.get({ ...dates, branch_id: branchId }),
-    enabled: can('dashboard.view'),
+    enabled: can('dashboard.view') && !platformOnly,
   });
   const d = data?.data;
   const money = (v: string | number | null | undefined) => (v === null || v === undefined ? '—' : formatMoney(v, currency));
@@ -77,11 +119,29 @@ export default function DashboardPage() {
     [d?.by_branch],
   );
 
+  // Platform staff outside a company are redirected to the console (SessionProvider).
+  if (platformOnly) return null;
   if (!can('dashboard.view')) {
-    return <EmptyState title="Dashboard unavailable" description="Your role does not include access to the executive dashboard." />;
+    return (
+      <div className={styles.page}>
+        <PageHeader title={user?.name ? 'Welcome, ' + user.name.split(' ')[0] : 'Welcome'} description={company?.name} />
+        <QuickLinks can={can} />
+      </div>
+    );
   }
 
   const m = d?.metrics ?? {};
+  // The API omits metrics/sections the user may not see — render only what is present.
+  const has = (key: keyof DashboardPayload) => !!d && d[key] !== undefined && d[key] !== null;
+  const hasFinance = !!(m.revenue || m.expenses);
+  const showBranches = hasFinance && has('by_branch');
+  const showInvoices = has('recent_invoices');
+  const showApprovals = has('pending_approvals');
+  const showLowStock = has('low_stock_items');
+  const showDepartments = has('by_department');
+  const showActivity = has('recent_activity');
+  const richMetrics = Object.keys(m).some((k) => k !== 'pending_approvals');
+  const showQuickLinks = !!d && !richMetrics && !showInvoices && !showLowStock && !showDepartments && !showActivity && !showBranches;
   const greeting = (() => {
     const h = new Date().getHours();
     return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
@@ -155,7 +215,11 @@ export default function DashboardPage() {
             )}
           </section>
 
+          {showQuickLinks && <QuickLinks can={can} />}
+
+          {(hasFinance || showBranches) && (
           <section className={styles.grid2}>
+            {hasFinance && (
             <ChartCard
               title="Revenue vs expenses"
               description="Posted to the general ledger"
@@ -195,7 +259,9 @@ export default function DashboardPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </ChartCard>
+            )}
 
+            {showBranches && (
             <ChartCard
               title="By branch"
               description="Revenue and expenses per branch"
@@ -229,9 +295,13 @@ export default function DashboardPage() {
                 </BarChart>
               </ResponsiveContainer>
             </ChartCard>
+            )}
           </section>
+          )}
 
+          {(showInvoices || showApprovals || showLowStock) && (
           <section className={styles.grid3}>
+            {showInvoices && (
             <Card>
               <CardHeader title="Recent invoices" actions={<Link href="/finance/invoices" className={styles.more}>View all <ArrowRight size={14} /></Link>} />
               <CardBody padding="none">
@@ -259,7 +329,9 @@ export default function DashboardPage() {
                 )}
               </CardBody>
             </Card>
+            )}
 
+            {showApprovals && (
             <Card>
               <CardHeader title="Pending approvals" actions={<Link href="/approvals" className={styles.more}>Inbox <ArrowRight size={14} /></Link>} />
               <CardBody padding="none">
@@ -284,7 +356,9 @@ export default function DashboardPage() {
                 )}
               </CardBody>
             </Card>
+            )}
 
+            {showLowStock && (
             <Card>
               <CardHeader
                 title="Low stock"
@@ -315,9 +389,13 @@ export default function DashboardPage() {
                 )}
               </CardBody>
             </Card>
+            )}
           </section>
+          )}
 
+          {(showDepartments || showActivity) && (
           <section className={styles.grid2}>
+            {showDepartments && (
             <Card>
               <CardHeader title="Headcount by department" />
               <CardBody>
@@ -343,7 +421,9 @@ export default function DashboardPage() {
                 )}
               </CardBody>
             </Card>
+            )}
 
+            {showActivity && (
             <Card>
               <CardHeader title="Recent activity" actions={can('audit.view') ? <Link href="/audit" className={styles.more}>Audit log <ArrowRight size={14} /></Link> : undefined} />
               <CardBody padding="none">
@@ -368,7 +448,9 @@ export default function DashboardPage() {
                 )}
               </CardBody>
             </Card>
+            )}
           </section>
+          )}
         </>
       )}
     </div>

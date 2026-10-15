@@ -172,3 +172,51 @@
   background: var(--color-primary);
   flex-shrink: 0;
 }
+
+.quickLinks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--space-3);
+
+  @include up(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include up(xl) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--color-surface-hover);
+    }
+
+    > svg {
+      flex: 0 0 auto;
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+.quickIcon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+}
