@@ -86,6 +86,37 @@ class PrivilegeEscalationTest extends TestCase
         $this->assertDatabaseMissing('role_user', ['role_id' => $this->role('company.owner')->id, 'user_id' => $this->admin->id]);
     }
 
+    public function test_admin_cannot_deactivate_the_owners_membership(): void
+    {
+        $this->actingAsIn($this->admin, $this->company)
+            ->putJson("/api/v1/users/{$this->owner->id}", ['is_active' => false])
+            ->assertForbidden()
+            ->assertJsonPath('code', 'access.escalation_denied');
+
+        $this->assertDatabaseHas('company_user', ['company_id' => $this->company->id, 'user_id' => $this->owner->id, 'is_active' => true]);
+    }
+
+    public function test_admin_cannot_remove_the_owner_from_the_company(): void
+    {
+        $this->actingAsIn($this->admin, $this->company)
+            ->deleteJson("/api/v1/users/{$this->owner->id}")
+            ->assertForbidden()
+            ->assertJsonPath('code', 'access.escalation_denied');
+
+        $this->assertDatabaseHas('company_user', ['company_id' => $this->company->id, 'user_id' => $this->owner->id]);
+    }
+
+    public function test_admin_can_still_deactivate_a_regular_member(): void
+    {
+        $member = User::factory()->inCompany($this->company)->create();
+
+        $this->actingAsIn($this->admin, $this->company)
+            ->putJson("/api/v1/users/{$member->id}", ['is_active' => false])
+            ->assertOk();
+
+        $this->assertDatabaseHas('company_user', ['company_id' => $this->company->id, 'user_id' => $member->id, 'is_active' => false]);
+    }
+
     public function test_admin_cannot_remove_the_owner_role_from_the_owner(): void
     {
         $this->actingAsIn($this->admin, $this->company)

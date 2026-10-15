@@ -11,6 +11,7 @@ use App\Http\Resources\Access\CompanyUserResource;
 use App\Models\CompanyUser;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\Access\PrivilegeEscalationGuard;
 use App\Support\Audit\AuditLogger;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Database\Eloquent\Builder;
@@ -106,10 +107,11 @@ class CompanyUserController extends ApiController
         return new CompanyUserResource($membership);
     }
 
-    public function destroy(Request $request, int $user): JsonResponse
+    public function destroy(Request $request, int $user, PrivilegeEscalationGuard $guard): JsonResponse
     {
         $membership = $this->member($user);
         Gate::authorize('delete', $membership);
+        $guard->assertCanManageMember($request->user(), $membership->company_id, $membership->user);
 
         DB::transaction(function () use ($membership): void {
             $roleNames = Role::query()

@@ -31,6 +31,10 @@ class UpdateMembershipAction
             throw ValidationException::withMessages(['is_active' => ['You cannot deactivate your own membership.']]);
         }
 
+        if (array_key_exists('is_active', $data) && ! $data['is_active']) {
+            $this->guard->assertCanManageMember($actor, $companyId, $membership->user);
+        }
+
         $newRoleIds = array_key_exists('role_ids', $data)
             ? collect($data['role_ids'])->map(fn ($id) => (int) $id)->unique()->values()
             : null;

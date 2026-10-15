@@ -33,6 +33,17 @@ class PrivilegeEscalationGuard
     }
 
     /**
+     * Rule 5: only a Company Owner may deactivate or remove the membership of
+     * someone who holds the Company Owner role.
+     */
+    public function assertCanManageMember(User $actor, int $companyId, User $target): void
+    {
+        if ($this->isOwner($target, $companyId) && ! $this->isOwner($actor, $companyId)) {
+            throw new PrivilegeEscalationException('Only a Company Owner can deactivate or remove a Company Owner.');
+        }
+    }
+
+    /**
      * Rules 1 + 2 for invitations and membership updates.
      *
      * @param  iterable<int|string>  $newRoleIds  role ids the member will hold
