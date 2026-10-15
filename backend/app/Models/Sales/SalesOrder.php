@@ -7,6 +7,7 @@ use App\Models\Inventory\Warehouse;
 use App\Models\User;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Sales\SalesOrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +30,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SalesOrder extends Model
 {
     /** @use HasFactory<SalesOrderFactory> */
-    use Auditable, BelongsToCompany, HasFactory, SoftDeletes;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches, SoftDeletes;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['warehouse'];
 
     /** @var array<int, string> */
     public const SHIPPING_FIELDS = [

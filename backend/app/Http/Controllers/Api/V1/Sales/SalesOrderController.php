@@ -27,7 +27,7 @@ class SalesOrderController extends ApiController
     {
         Gate::authorize('viewAny', SalesOrder::class);
 
-        $query = SalesOrder::query()->with(['customer', 'salesRep'])->withCount(['lines', 'deliveries']);
+        $query = SalesOrder::query()->visibleBranches()->with(['customer', 'salesRep'])->withCount(['lines', 'deliveries']);
         $this->applySearch($query, $request, ['number', 'shipping_name', 'notes']);
         $this->applyFilters($query, $request, ['status', 'customer_id', 'sales_rep_id', 'warehouse_id', 'quotation_id', 'currency']);
         $this->applyDateRange($query, $request, 'order_date');

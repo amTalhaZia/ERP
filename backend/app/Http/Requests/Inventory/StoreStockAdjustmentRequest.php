@@ -6,6 +6,7 @@ use App\Enums\Inventory\StockAdjustmentReason;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Warehouse;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +25,7 @@ class StoreStockAdjustmentRequest extends FormRequest
         $required = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'warehouse_id' => [$required, 'integer', new TenantExists(Warehouse::class, where: ['is_active' => true])],
+            'warehouse_id' => [$required, 'integer', new TenantExists(Warehouse::class, where: ['is_active' => true]), new WithinAccessibleBranch(Warehouse::class)],
             'reason' => [$required, Rule::enum(StockAdjustmentReason::class)],
             'notes' => ['nullable', 'string', 'max:1000'],
             'lines' => [$required, 'array', 'min:1', 'max:500'],

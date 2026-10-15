@@ -9,6 +9,7 @@ import { AlertCircle, Hexagon, KeyRound } from 'lucide-react';
 import { authApi } from '@/features/auth/api';
 import { useSession } from '@/lib/auth/SessionProvider';
 import { isApiError } from '@/lib/api/errors';
+import { homePathFor } from '@/lib/auth/home';
 import styles from '../auth.module.scss';
 
 const schema = z.object({ code: z.string().min(6, 'Enter the 6-digit code or a recovery code') });
@@ -31,7 +32,7 @@ function TwoFactorPageInner() {
     try {
       const res = await authApi.twoFactorChallenge(code.trim(), recovery);
       applySession(res.session);
-      router.replace(params.get('next') ?? '/dashboard');
+      router.replace(params.get('next') ?? homePathFor(res.session));
     } catch (e) {
       setFormError(isApiError(e) ? (e.errors?.code?.[0] ?? e.message) : 'Something went wrong.');
     }

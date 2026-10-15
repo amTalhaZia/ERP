@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\User;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Procurement\PurchaseRequisitionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PurchaseRequisition extends Model
 {
     /** @use HasFactory<PurchaseRequisitionFactory> */
-    use Auditable, BelongsToCompany, HasFactory;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** Branch restriction: direct `branch_id` column. */
+    protected string $branchColumn = 'branch_id';
 
     protected function casts(): array
     {

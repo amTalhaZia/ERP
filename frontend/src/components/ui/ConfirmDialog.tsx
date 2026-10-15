@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 import { TriangleAlert } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Button } from './Button';
@@ -47,6 +47,10 @@ export function ConfirmDialog({
   const cancelRef = useRef<HTMLButtonElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const descId = useId();
+  // With an icon the description sits beside it in the body (otherwise the body
+  // would show a lone icon under a header that carries all the text).
+  const showIcon = destructive || !!icon;
 
   const isLoading = loading ?? pending;
   const needsTyping = !!typeToConfirm;
@@ -84,7 +88,8 @@ export function ConfirmDialog({
       size="sm"
       role="alertdialog"
       title={title}
-      description={description}
+      description={showIcon ? undefined : description}
+      aria-describedby={showIcon && description ? descId : undefined}
       showCloseButton={false}
       initialFocusRef={initialFocusRef}
       closeOnOverlayClick={closeOnOverlayClick ?? !isLoading}
@@ -101,9 +106,16 @@ export function ConfirmDialog({
         </>
       }
     >
-      {(destructive || icon) && (
-        <div className={cn(styles.icon, destructive && styles.destructive)} aria-hidden>
-          {icon ?? <TriangleAlert />}
+      {showIcon && (
+        <div className={styles.lead}>
+          <div className={cn(styles.icon, destructive && styles.destructive)} aria-hidden>
+            {icon ?? <TriangleAlert />}
+          </div>
+          {description && (
+            <p id={descId} className={styles.description}>
+              {description}
+            </p>
+          )}
         </div>
       )}
       {children}

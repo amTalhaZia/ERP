@@ -17,7 +17,7 @@ class StockAdjustmentPolicy
 
     public function view(User $user, StockAdjustment $adjustment): bool
     {
-        return $this->sameTenant($adjustment) && $this->viewAny($user);
+        return $this->sameTenant($adjustment) && $this->inAllowedBranch($adjustment) && $this->viewAny($user);
     }
 
     public function create(User $user): bool

@@ -8,6 +8,7 @@ use App\Models\Procurement\PurchaseRequisition;
 use App\Models\Procurement\Supplier;
 use App\Support\Tenancy\Rules\AccessibleBranch;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -30,13 +31,13 @@ class StorePurchaseOrderRequest extends FormRequest
 
         return [
             'supplier_id' => [$required, 'integer', new TenantExists(Supplier::class)],
-            'requisition_id' => ['nullable', 'integer', new TenantExists(PurchaseRequisition::class)],
+            'requisition_id' => ['nullable', 'integer', new TenantExists(PurchaseRequisition::class), new WithinAccessibleBranch(PurchaseRequisition::class)],
             'branch_id' => ['nullable', 'integer', new AccessibleBranch],
             'order_date' => [$required, 'date'],
             'expected_date' => ['nullable', 'date', 'after_or_equal:order_date'],
             'currency' => ['nullable', 'string', 'size:3', 'alpha'],
             'shipping_cost' => ['nullable', 'numeric', 'min:0'],
-            'warehouse_id' => ['nullable', 'integer', new TenantExists(Warehouse::class)],
+            'warehouse_id' => ['nullable', 'integer', new TenantExists(Warehouse::class), new WithinAccessibleBranch(Warehouse::class)],
             'delivery_address' => ['nullable', 'string', 'max:500'],
             'payment_terms_days' => ['nullable', 'integer', 'between:0,365'],
             'notes' => ['nullable', 'string', 'max:2000'],

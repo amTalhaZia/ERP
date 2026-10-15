@@ -27,7 +27,7 @@ class StockTransferController extends ApiController
     {
         Gate::authorize('viewAny', StockTransfer::class);
 
-        $query = StockTransfer::query()->with(['fromWarehouse:id,name,code', 'toWarehouse:id,name,code'])->withCount('lines');
+        $query = StockTransfer::query()->visibleBranches()->with(['fromWarehouse:id,name,code', 'toWarehouse:id,name,code'])->withCount('lines');
         $this->applySearch($query, $request, ['number', 'notes']);
         $this->applyFilters($query, $request, ['status', 'from_warehouse_id', 'to_warehouse_id']);
         $this->applyDateRange($query, $request, 'created_at');

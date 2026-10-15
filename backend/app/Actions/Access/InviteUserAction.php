@@ -7,6 +7,7 @@ use App\Models\CompanyUser;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\UserInvitedNotification;
+use App\Support\Access\PrivilegeEscalationGuard;
 use App\Support\Audit\AuditLogger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
@@ -20,13 +21,18 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
  */
 class InviteUserAction
 {
-    public function __construct(private readonly AuditLogger $audit) {}
+    public function __construct(private readonly AuditLogger $audit, private readonly PrivilegeEscalationGuard $guard) {}
 
     /**
      * @param  array{name: string, email: string, role_ids: array<int, int>, branch_ids?: array<int, int>|null}  $data
      */
     public function handle(Company $company, array $data, ?User $invitedBy = null): CompanyUser
     {
+        // Members may not hand out roles beyond their own access (or the owner role).
+        if ($invitedBy !== null) {
+            $this->guard->assertCanAssignRoles($invitedBy, $company->id, $data['role_ids']);
+        }
+
         $isNewAccount = false;
 
         $membership = DB::transaction(function () use ($company, $data, &$isNewAccount): CompanyUser {

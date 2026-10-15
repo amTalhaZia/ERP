@@ -6,6 +6,7 @@ use App\Enums\Sales\DeliveryStatus;
 use App\Models\User;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Sales\DeliveryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +21,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Delivery extends Model
 {
     /** @use HasFactory<DeliveryFactory> */
-    use Auditable, BelongsToCompany, HasFactory;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['salesOrder'];
 
     protected function casts(): array
     {

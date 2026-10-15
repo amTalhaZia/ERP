@@ -142,10 +142,20 @@ function UserForm({ open, user, onClose }: { open: boolean; user: CompanyUser | 
   );
 }
 
+/** "All branches" when unrestricted; otherwise up to two names then "+N". */
+function branchSummary(ids: number[] | null | undefined, names: Map<number, string>): string {
+  if (!ids) return 'All branches';
+  if (ids.length === 0) return 'No branches';
+  const labels = ids.map((id) => names.get(id) ?? `Branch #${id}`);
+  const shown = labels.slice(0, 2).join(', ');
+  return labels.length > 2 ? `${shown} +${labels.length - 2}` : shown;
+}
+
 function UsersInner() {
   const can = useCan();
   const toast = useToast();
   const me = useAppSelector(selectUser);
+  const allBranchList = useAppSelector(selectBranches);
   const list = useListState({ sort: 'name' });
   const query = companyUsers.useList(list.apiParams);
   const roleList = roles.useList({ per_page: 100, sort: 'name' });
@@ -154,6 +164,7 @@ function UsersInner() {
   const [editing, setEditing] = useState<CompanyUser | 'new' | null>(null);
   const [removing, setRemoving] = useState<CompanyUser | null>(null);
   const canManage = can('users.manage');
+  const branchNames = new Map(allBranchList.map((b) => [b.id, b.name]));
 
   const columns: DataTableColumn<CompanyUser>[] = [
     {
@@ -173,7 +184,7 @@ function UsersInner() {
       ),
     },
     { id: 'roles', header: 'Roles', cell: ({ row }) => <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>{row.original.roles?.map((r) => <Badge key={r.id} variant="primary" size="sm">{r.name}</Badge>)}</div> },
-    { id: 'branches', header: 'Branches', cell: ({ row }) => (row.original.branch_ids ? `${row.original.branch_ids.length} selected` : 'All') },
+    { id: 'branches', header: 'Branches', cell: ({ row }) => branchSummary(row.original.branch_ids, branchNames) },
     { id: 'last_login_at', accessorKey: 'last_login_at', header: 'Last sign-in', enableSorting: true, cell: ({ row }) => (row.original.last_login_at ? formatRelative(row.original.last_login_at) : <span className={styles.muted}>{row.original.email_verified_at ? 'Never' : 'Invite pending'}</span>) },
     { id: 'status', header: 'Status', cell: ({ row }) => <StatusBadge status={row.original.is_active && row.original.user_is_active ? 'active' : 'inactive'} /> },
   ];

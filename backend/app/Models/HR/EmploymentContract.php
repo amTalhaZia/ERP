@@ -6,6 +6,7 @@ use App\Enums\HR\ContractStatus;
 use App\Enums\HR\EmploymentType;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\HR\EmploymentContractFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +20,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class EmploymentContract extends Model
 {
     /** @use HasFactory<EmploymentContractFactory> */
-    use Auditable, BelongsToCompany, HasFactory;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['employee'];
 
     protected function casts(): array
     {

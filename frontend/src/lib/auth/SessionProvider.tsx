@@ -9,6 +9,7 @@ import { setTheme, setHighContrast } from '@/store/uiSlice';
 import { setApiCompanyId, setUnauthorizedHandler } from '@/lib/api/client';
 import { authApi } from '@/features/auth/api';
 import type { SessionPayload } from '@/features/auth/types';
+import { homePathFor, isPlatformOnly } from './home';
 
 interface SessionContextValue {
   refresh: () => Promise<SessionPayload | null>;
@@ -70,7 +71,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       applySession(data);
       // All cached server data belongs to the previous tenant.
       queryClient.clear();
-      router.replace('/dashboard');
+      router.replace(homePathFor(data));
     },
     [applySession, queryClient, router],
   );
@@ -100,9 +101,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
     if (session.status === 'authenticated' && isPublicPath(pathname) && !pathname.startsWith('/two-factor')) {
-      router.replace('/dashboard');
+      router.replace(homePathFor(session));
     }
-  }, [session.status, pathname, router]);
+    // Platform staff outside any company have no dashboard — send them to the console.
+    if (session.status === 'authenticated' && pathname === '/dashboard' && isPlatformOnly(session)) {
+      router.replace('/platform/companies');
+    }
+  }, [session, pathname, router]);
 
   const value = useMemo(() => ({ refresh, applySession, logout, switchCompany }), [refresh, applySession, logout, switchCompany]);
 

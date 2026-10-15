@@ -35,6 +35,8 @@ export interface ModalProps {
   role?: 'dialog' | 'alertdialog';
   /** Required when there is no `title`. */
   'aria-label'?: string;
+  /** Id of an element inside the body that describes the dialog (when not using `description`). */
+  'aria-describedby'?: string;
   className?: string;
   bodyClassName?: string;
 }
@@ -54,6 +56,7 @@ export function Modal({
   noPadding,
   role = 'dialog',
   'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
   className,
   bodyClassName,
 }: ModalProps) {
@@ -92,7 +95,7 @@ export function Modal({
             aria-modal="true"
             aria-labelledby={title ? titleId : undefined}
             aria-label={!title ? ariaLabel : undefined}
-            aria-describedby={description ? descId : undefined}
+            aria-describedby={description ? descId : ariaDescribedBy}
             tabIndex={-1}
             className={cn(styles.panel, styles[size], className)}
             initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: 8 }}

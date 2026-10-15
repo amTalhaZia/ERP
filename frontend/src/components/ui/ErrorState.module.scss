@@ -69,3 +69,13 @@
   gap: var(--space-2);
   margin-top: var(--space-5);
 }
+
+.warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning-text);
+}
+
+.neutral {
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral-text);
+}

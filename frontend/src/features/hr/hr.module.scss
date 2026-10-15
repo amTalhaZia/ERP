@@ -549,3 +549,9 @@ mark.hl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+// Row opened from a notification link (?request=ID).
+.highlightRow,
+.highlightRow > td {
+  background: var(--color-primary-soft) !important;
+}

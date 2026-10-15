@@ -13,6 +13,7 @@ import { useSession } from '@/lib/auth/SessionProvider';
 import { findNavTrail, userMenuItems } from '@/lib/navigation';
 import { get } from '@/lib/api/client';
 import { authApi } from '@/features/auth/api';
+import { isTypingTarget, useModKeyLabel } from '@/hooks/useShortcutLabel';
 import styles from './Topbar.module.scss';
 
 function useClickAway(onAway: () => void) {
@@ -59,6 +60,24 @@ export function Topbar() {
   const close = () => setOpenMenu(null);
   const menuRef = useClickAway(close);
   const [switching, setSwitching] = useState(false);
+
+  const searchShortcut = useModKeyLabel('K');
+
+  // ⌘K / Ctrl+K → global search (ignored while typing in a field).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || e.key.toLowerCase() !== 'k') return;
+      if (isTypingTarget(e.target)) return;
+      e.preventDefault();
+      if (window.location.pathname === '/search') {
+        document.querySelector<HTMLInputElement>('main input[type="search"], main input')?.focus();
+      } else {
+        router.push('/search');
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [router]);
 
   const trail = findNavTrail(pathname);
   const title = trail.at(-1)?.label ?? 'Enterprise ERP';
@@ -118,10 +137,11 @@ export function Topbar() {
           className={styles.search}
           onClick={() => router.push('/search')}
           aria-label="Global search"
+          aria-keyshortcuts={searchShortcut.startsWith('⌘') ? 'Meta+K' : 'Control+K'}
         >
           <Search size={16} aria-hidden />
           <span>Search…</span>
-          <kbd>⌘K</kbd>
+          <kbd>{searchShortcut}</kbd>
         </button>
       </div>
 

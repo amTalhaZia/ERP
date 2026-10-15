@@ -7,6 +7,24 @@
   }
 }
 
+.lead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+
+  .icon {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+}
+
+.description {
+  @include text(sm, regular, normal);
+  color: var(--color-text-secondary);
+  padding-top: 9px;
+  min-width: 0;
+}
+
 .icon {
   display: grid;
   place-items: center;

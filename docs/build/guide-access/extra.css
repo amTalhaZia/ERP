@@ -1,0 +1,23 @@
+/* Additions for the Admin Access guide. */
+.tree { margin: 4mm 0 6mm; display: flex; flex-direction: column; align-items: center; gap: 0; break-inside: avoid; }
+.tree .lvl { display: flex; gap: 4mm; justify-content: center; flex-wrap: wrap; }
+.tree .node {
+  border: 1.5px solid #c7d2fe; background: #fff; border-radius: 2.5mm; padding: 2.2mm 3.5mm; text-align: center; min-width: 34mm;
+  box-shadow: 0 1px 2px rgba(15,23,42,.05);
+}
+.tree .node b { display: block; color: var(--ink); font-size: 9.5pt; }
+.tree .node span { display: block; color: var(--muted); font-size: 7.6pt; line-height: 1.35; }
+.tree .node.l0 { background: #1e1b4b; border-color: #1e1b4b; } .tree .node.l0 b { color: #fff; } .tree .node.l0 span { color: #c7d2fe; }
+.tree .node.l1 { background: var(--accent); border-color: var(--accent); } .tree .node.l1 b { color: #fff; } .tree .node.l1 span { color: #e0e7ff; }
+.tree .node.l2 { background: var(--accent-soft); }
+.tree .node.side { border-style: dashed; }
+.tree .tag { font-size: 7pt; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; margin: 0 0 1mm; text-align: center; }
+.tree .link { width: 2px; height: 5mm; background: #a5b4fc; margin: 1mm auto; }
+.tree .row { display: flex; flex-direction: column; align-items: center; }
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 6mm; }
+.gallery .figure { margin: 2mm 0 3mm; }
+.gallery figcaption { font-size: 7.8pt; }
+.keybox { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin: 3mm 0 5mm; }
+.keybox .card h4 { font-size: 9.4pt; }
+.mark-legend { display: inline-block; border: 2.5px solid #ef4444; border-radius: 6px; padding: 0 6px; font-weight: 600; color: #b91c1c; }
+.badge-n { display: inline-block; min-width: 18px; height: 18px; line-height: 18px; border-radius: 9px; background: #ef4444; color: #fff; font-weight: 700; font-size: 8pt; text-align: center; padding: 0 4px; }

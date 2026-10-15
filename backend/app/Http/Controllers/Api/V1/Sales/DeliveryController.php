@@ -29,7 +29,7 @@ class DeliveryController extends ApiController
     {
         Gate::authorize('viewAny', Delivery::class);
 
-        $query = Delivery::query()->with('salesOrder.customer:id,name');
+        $query = Delivery::query()->visibleBranches()->with('salesOrder.customer:id,name');
         $this->applySearch($query, $request, ['number', 'carrier', 'tracking_number']);
         $this->applyFilters($query, $request, ['status', 'sales_order_id', 'carrier']);
         $this->applyDateRange($query, $request, 'delivery_date');

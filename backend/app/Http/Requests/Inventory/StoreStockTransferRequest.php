@@ -5,6 +5,7 @@ namespace App\Http\Requests\Inventory;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Warehouse;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreStockTransferRequest extends FormRequest
@@ -22,7 +23,7 @@ class StoreStockTransferRequest extends FormRequest
         $required = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'from_warehouse_id' => [$required, 'integer', new TenantExists(Warehouse::class, where: ['is_active' => true])],
+            'from_warehouse_id' => [$required, 'integer', new TenantExists(Warehouse::class, where: ['is_active' => true]), new WithinAccessibleBranch(Warehouse::class)],
             'to_warehouse_id' => [$required, 'integer', 'different:from_warehouse_id', new TenantExists(Warehouse::class, where: ['is_active' => true])],
             'notes' => ['nullable', 'string', 'max:1000'],
             'lines' => [$required, 'array', 'min:1', 'max:200'],

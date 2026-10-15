@@ -24,7 +24,7 @@ class PurchaseReturnController extends ApiController
     {
         Gate::authorize('viewAny', PurchaseReturn::class);
 
-        $query = PurchaseReturn::query()->with(['purchaseOrder:id,number,supplier_id,status', 'goodsReceipt:id,number']);
+        $query = PurchaseReturn::query()->visibleBranches()->with(['purchaseOrder:id,number,supplier_id,status', 'goodsReceipt:id,number']);
         $this->applySearch($query, $request, ['number', 'notes']);
         $this->applyFilters($query, $request, ['status', 'reason', 'purchase_order_id', 'goods_receipt_id']);
         $this->applyDateRange($query, $request, 'return_date');

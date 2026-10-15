@@ -5,6 +5,7 @@ namespace App\Models\HR;
 use App\Enums\HR\AttendanceSource;
 use App\Enums\HR\AttendanceStatus;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\HR\AttendanceRecordFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AttendanceRecord extends Model
 {
     /** @use HasFactory<AttendanceRecordFactory> */
-    use BelongsToCompany, HasFactory;
+    use BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['employee'];
 
     protected function casts(): array
     {

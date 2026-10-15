@@ -22,7 +22,7 @@ class StockAdjustmentController extends ApiController
     {
         Gate::authorize('viewAny', StockAdjustment::class);
 
-        $query = StockAdjustment::query()->with('warehouse:id,name,code')->withCount('lines');
+        $query = StockAdjustment::query()->visibleBranches()->with('warehouse:id,name,code')->withCount('lines');
         $this->applySearch($query, $request, ['number', 'notes']);
         $this->applyFilters($query, $request, ['status', 'reason', 'warehouse_id']);
         $this->applyDateRange($query, $request, 'created_at');

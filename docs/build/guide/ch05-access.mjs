@@ -49,7 +49,8 @@ ${steps([
   `${ui('Allowed branches')} mein sirf woh branches select karein jahan ka data user dekh sake.`,
   `Save karein. Users list ke ${ui('BRANCHES')} column mein ab "All" ke bajaye branch names nazar aayenge.`,
 ])}
-${note('Branch restriction un records par lagti hai jin par branch set ho (operational records jaise invoices, orders, employees). Company-level settings aur jin records par branch nahi, woh role ki permission ke mutabiq hi dikhte hain.')}
+${note('Is version mein branch restriction yeh records mehdood karti hai: customer invoices, supplier bills, payments/receipts, journal entries, payroll runs/payslips, warehouses, projects, dashboard aur reports/exports. Company-level settings aur jin records par branch nahi, woh role ki permission ke mutabiq dikhte hain.')}
+${warn('<b>Known limitation:</b> kuch lists abhi branch restriction lagu nahi kartin — maslan HR → Employees, sales orders, purchase orders, attendance, leave aur stock. Branch-restricted user in modules mein doosri branches ka data bhi dekh sakta hai (agar role mein us module ki permission ho). In modules ke liye asal hadd role ki permissions hain.')}
 
 ${h2('acc-edit-role', '5.6 Role ki permissions badalna aur custom role banana')}
 ${h3('System role edit karna')}

@@ -154,7 +154,7 @@ class ProductController extends ApiController
             ->orderBy('batch_number')
             ->get(['id', 'product_id', 'batch_number', 'manufactured_at', 'expires_at']);
 
-        $balances = StockMovement::query()
+        $balances = StockMovement::query()->visibleBranches()
             ->where('stock_movements.product_id', $product->id)
             ->whereNotNull('stock_movements.batch_id')
             ->join('warehouses', 'warehouses.id', '=', 'stock_movements.warehouse_id')
@@ -204,7 +204,7 @@ class ProductController extends ApiController
     {
         Gate::authorize('viewStock', $product);
 
-        $query = StockMovement::query()->where('stock_movements.product_id', $product->id)->with(['warehouse:id,name,code', 'batch:id,batch_number,expires_at', 'creator:id,name']);
+        $query = StockMovement::query()->visibleBranches()->where('stock_movements.product_id', $product->id)->with(['warehouse:id,name,code', 'batch:id,batch_number,expires_at', 'creator:id,name']);
         $this->applyFilters($query, $request, ['warehouse_id', 'type']);
         $this->applyDateRange($query, $request, 'moved_at');
         $this->applySort($query, $request, ['moved_at', 'id'], '-moved_at');

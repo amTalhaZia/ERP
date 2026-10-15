@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Inventory\StockLevelFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StockLevel extends Model
 {
     /** @use HasFactory<StockLevelFactory> */
-    use BelongsToCompany, HasFactory;
+    use BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['warehouse'];
 
     protected function casts(): array
     {

@@ -35,7 +35,7 @@ class LeaveRequestController extends ApiController
     {
         Gate::authorize('viewAny', LeaveRequest::class);
 
-        $query = LeaveRequest::query()->with(self::RELATIONS);
+        $query = LeaveRequest::query()->visibleBranches()->with(self::RELATIONS);
 
         if (! Gate::allows('viewAll', LeaveRequest::class)) {
             $query->whereHas('employee', fn (Builder $q) => $q->where('user_id', $request->user()->id));

@@ -10,6 +10,7 @@ import { AlertCircle, Eye, EyeOff, Hexagon } from 'lucide-react';
 import { authApi } from '@/features/auth/api';
 import { useSession } from '@/lib/auth/SessionProvider';
 import { isApiError } from '@/lib/api/errors';
+import { homePathFor } from '@/lib/auth/home';
 import styles from '../auth.module.scss';
 
 const schema = z.object({
@@ -38,12 +39,13 @@ function LoginPageInner() {
     try {
       const res = await authApi.login(values);
       if (res.two_factor) {
-        router.replace(`/two-factor?next=${encodeURIComponent(params.get('next') ?? '/dashboard')}`);
+        const next = params.get('next');
+        router.replace(next ? `/two-factor?next=${encodeURIComponent(next)}` : '/two-factor');
         return;
       }
       if (res.session) {
         applySession(res.session);
-        router.replace(params.get('next') ?? '/dashboard');
+        router.replace(params.get('next') ?? homePathFor(res.session));
       }
     } catch (e) {
       if (isApiError(e)) {

@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use App\Enums\Inventory\StockMovementType;
 use App\Models\User;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Inventory\StockMovementFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class StockMovement extends Model
 {
     /** @use HasFactory<StockMovementFactory> */
-    use BelongsToCompany, HasFactory;
+    use BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['warehouse'];
 
     public const UPDATED_AT = null;
 

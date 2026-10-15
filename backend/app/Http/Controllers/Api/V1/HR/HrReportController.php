@@ -23,7 +23,7 @@ class HrReportController extends ApiController
         Gate::authorize('viewAny', Employee::class);
 
         $range = $this->range($request, required: false);
-        $employed = fn () => Employee::query()->employed();
+        $employed = fn () => Employee::query()->visibleBranches()->employed();
 
         $byDepartment = $employed()
             ->leftJoin('departments', 'departments.id', '=', 'employees.department_id')
@@ -47,7 +47,7 @@ class HrReportController extends ApiController
             ->toBase()->get()
             ->map(fn (object $r) => ['key' => $r->key, 'total' => (int) $r->total]);
 
-        $byStatus = Employee::query()
+        $byStatus = Employee::query()->visibleBranches()
             ->groupBy('status')
             ->selectRaw('status AS `key`, COUNT(*) AS total')
             ->toBase()->get()
@@ -57,8 +57,8 @@ class HrReportController extends ApiController
         $leavers = null;
 
         if ($range !== null) {
-            $joiners = Employee::query()->whereBetween('hired_at', [$range['from'], $range['to']])->count();
-            $leavers = Employee::query()
+            $joiners = Employee::query()->visibleBranches()->whereBetween('hired_at', [$range['from'], $range['to']])->count();
+            $leavers = Employee::query()->visibleBranches()
                 ->where('status', EmployeeStatus::Terminated->value)
                 ->whereBetween('terminated_at', [$range['from'], $range['to']])
                 ->count();
@@ -83,7 +83,7 @@ class HrReportController extends ApiController
 
         $range = $this->range($request, required: true);
 
-        $byDepartment = AttendanceRecord::query()
+        $byDepartment = AttendanceRecord::query()->visibleBranches()
             ->join('employees', 'employees.id', '=', 'attendance_records.employee_id')
             ->leftJoin('departments', 'departments.id', '=', 'employees.department_id')
             ->whereBetween('attendance_records.date', [$range['from'], $range['to']])
@@ -117,7 +117,7 @@ class HrReportController extends ApiController
                 'late_minutes' => (int) $r->late_minutes,
             ]);
 
-        $totals = AttendanceRecord::query()
+        $totals = AttendanceRecord::query()->visibleBranches()
             ->whereBetween('date', [$range['from'], $range['to']])
             ->selectRaw(implode(', ', [
                 'COUNT(*) AS records',
@@ -148,7 +148,7 @@ class HrReportController extends ApiController
 
         $range = $this->range($request, required: true);
 
-        $byType = LeaveRequest::query()
+        $byType = LeaveRequest::query()->visibleBranches()
             ->join('leave_types', 'leave_types.id', '=', 'leave_requests.leave_type_id')
             ->where('leave_requests.status', LeaveRequestStatus::Approved->value)
             ->whereBetween('leave_requests.start_date', [$range['from'], $range['to']])
@@ -165,7 +165,7 @@ class HrReportController extends ApiController
                 'days' => number_format((float) $r->days, 1, '.', ''),
             ]);
 
-        $byStatus = LeaveRequest::query()
+        $byStatus = LeaveRequest::query()->visibleBranches()
             ->whereBetween('start_date', [$range['from'], $range['to']])
             ->groupBy('status')
             ->selectRaw('status AS `key`, COUNT(*) AS total, SUM(days) AS days')

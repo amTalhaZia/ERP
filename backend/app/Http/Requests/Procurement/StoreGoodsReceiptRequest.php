@@ -4,6 +4,7 @@ namespace App\Http\Requests\Procurement;
 
 use App\Models\Inventory\Warehouse;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -25,7 +26,7 @@ class StoreGoodsReceiptRequest extends FormRequest
     {
         return [
             'received_date' => [$this->isMethod('POST') ? 'required' : 'sometimes', 'date'],
-            'warehouse_id' => ['nullable', 'integer', new TenantExists(Warehouse::class)],
+            'warehouse_id' => ['nullable', 'integer', new TenantExists(Warehouse::class), new WithinAccessibleBranch(Warehouse::class)],
             'supplier_delivery_note' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'lines' => ['required', 'array', 'min:1', 'max:200'],

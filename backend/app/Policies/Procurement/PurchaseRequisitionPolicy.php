@@ -27,7 +27,7 @@ class PurchaseRequisitionPolicy
             return false;
         }
 
-        return $user->hasAnyPermission(['requisitions.view', 'requisitions.approve'])
+        return ($user->hasAnyPermission(['requisitions.view', 'requisitions.approve']) && $this->inAllowedBranch($requisition))
             || ($this->isRequester($user, $requisition) && $this->can($user, 'requisitions.create'));
     }
 

@@ -17,7 +17,7 @@ class GoodsReceiptPolicy
 
     public function view(User $user, GoodsReceipt $receipt): bool
     {
-        return $this->sameTenant($receipt) && $this->viewAny($user);
+        return $this->sameTenant($receipt) && $this->inAllowedBranch($receipt) && $this->viewAny($user);
     }
 
     public function create(User $user): bool

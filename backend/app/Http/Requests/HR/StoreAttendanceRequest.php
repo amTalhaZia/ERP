@@ -6,6 +6,7 @@ use App\Enums\HR\AttendanceSource;
 use App\Enums\HR\AttendanceStatus;
 use App\Models\HR\Employee;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +25,7 @@ class StoreAttendanceRequest extends FormRequest
         $creating = $this->isMethod('POST');
 
         return [
-            'employee_id' => [$creating ? 'required' : 'prohibited', 'integer', new TenantExists(Employee::class)],
+            'employee_id' => [$creating ? 'required' : 'prohibited', 'integer', new TenantExists(Employee::class), new WithinAccessibleBranch(Employee::class)],
             'date' => [$creating ? 'required' : 'prohibited', 'date_format:Y-m-d'],
             'status' => [$creating ? 'required' : 'sometimes', Rule::enum(AttendanceStatus::class)],
             'check_in' => ['nullable', 'date'],

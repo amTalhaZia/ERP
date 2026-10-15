@@ -83,7 +83,7 @@ class GlobalSearch
     {
         return match ($type) {
             'employees' => $this->run(
-                Employee::query(), ['employee_code', 'first_name', 'last_name', 'email'], 'employee_code', $contains, $prefix,
+                Employee::query()->visibleBranches(), ['employee_code', 'first_name', 'last_name', 'email'], 'employee_code', $contains, $prefix,
                 fn ($q) => $q->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$contains]),
             )->map(fn (Employee $e) => $this->hit('employee', $e->id, trim($e->first_name.' '.$e->last_name), implode(' · ', array_filter([$e->employee_code, $e->email])), '/hr/employees/'.$e->id)),
 
@@ -98,10 +98,10 @@ class GlobalSearch
 
             'invoices' => $this->invoices($contains, $prefix),
 
-            'purchase_orders' => $this->run(PurchaseOrder::query()->with('supplier:id,name'), ['number'], 'number', $contains, $prefix)
+            'purchase_orders' => $this->run(PurchaseOrder::query()->visibleBranches()->with('supplier:id,name'), ['number'], 'number', $contains, $prefix)
                 ->map(fn (PurchaseOrder $o) => $this->hit('purchase_order', $o->id, $o->number, $this->docSubtitle($o->supplier?->name, $o->currency, $o->total, $o->status), '/procurement/orders/'.$o->id)),
 
-            'sales_orders' => $this->run(SalesOrder::query()->with('customer:id,name'), ['number'], 'number', $contains, $prefix)
+            'sales_orders' => $this->run(SalesOrder::query()->visibleBranches()->with('customer:id,name'), ['number'], 'number', $contains, $prefix)
                 ->map(fn (SalesOrder $o) => $this->hit('sales_order', $o->id, $o->number, $this->docSubtitle($o->customer?->name, $o->currency, $o->total, $o->status), '/sales/orders/'.$o->id)),
 
             'quotations' => $this->run(Quotation::query()->with('customer:id,name'), ['number'], 'number', $contains, $prefix)

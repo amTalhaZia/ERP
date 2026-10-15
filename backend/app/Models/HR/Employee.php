@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\User;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\HR\EmployeeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,7 +33,10 @@ use Illuminate\Support\Facades\Storage;
 class Employee extends Model
 {
     /** @use HasFactory<EmployeeFactory> */
-    use Auditable, BelongsToCompany, HasFactory, SoftDeletes;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches, SoftDeletes;
+
+    /** Branch restriction: direct `branch_id` column. */
+    protected string $branchColumn = 'branch_id';
 
     /** @var array<int, string> encrypted / bulky attributes never written to the audit trail */
     protected array $auditExclude = ['national_id', 'bank_account_number', 'bank_iban', 'tax_identifier', 'photo_path', 'notes'];

@@ -29,7 +29,7 @@ class InventoryReportController extends ApiController
             'group_by' => ['nullable', Rule::in(['category'])],
         ]);
 
-        $base = StockLevel::query()->where('stock_levels.quantity_on_hand', '!=', 0);
+        $base = StockLevel::query()->visibleBranches()->where('stock_levels.quantity_on_hand', '!=', 0);
 
         if ($warehouseId = $request->integer('warehouse_id')) {
             $base->where('stock_levels.warehouse_id', $warehouseId);
@@ -110,7 +110,7 @@ class InventoryReportController extends ApiController
         $to = ($request->date('to') ?? now())->endOfDay();
         $period = $group === 'month' ? "DATE_FORMAT(stock_movements.moved_at, '%Y-%m')" : 'DATE(stock_movements.moved_at)';
 
-        $query = StockMovement::query()
+        $query = StockMovement::query()->visibleBranches()
             ->whereBetween('stock_movements.moved_at', [$from, $to])
             ->selectRaw("{$period} AS period")
             ->selectRaw('COUNT(*) AS movements')

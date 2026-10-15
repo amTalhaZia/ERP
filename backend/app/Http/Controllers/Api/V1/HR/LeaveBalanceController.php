@@ -23,7 +23,7 @@ class LeaveBalanceController extends ApiController
     {
         Gate::authorize('viewAny', LeaveBalance::class);
 
-        $query = LeaveBalance::query()->with(self::RELATIONS);
+        $query = LeaveBalance::query()->visibleBranches()->with(self::RELATIONS);
         $this->applyFilters($query, $request, ['employee_id', 'leave_type_id', 'year']);
         $this->applySort($query, $request, ['year', 'entitled', 'used', 'updated_at'], '-year');
 

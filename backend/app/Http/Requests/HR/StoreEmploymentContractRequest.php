@@ -6,6 +6,7 @@ use App\Enums\HR\ContractStatus;
 use App\Enums\HR\EmploymentType;
 use App\Models\HR\Employee;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +25,7 @@ class StoreEmploymentContractRequest extends FormRequest
         $required = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'employee_id' => [$this->isMethod('POST') ? 'required' : 'prohibited', 'integer', new TenantExists(Employee::class)],
+            'employee_id' => [$this->isMethod('POST') ? 'required' : 'prohibited', 'integer', new TenantExists(Employee::class), new WithinAccessibleBranch(Employee::class)],
             'contract_type' => [$required, Rule::enum(EmploymentType::class)],
             'start_date' => [$required, 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],

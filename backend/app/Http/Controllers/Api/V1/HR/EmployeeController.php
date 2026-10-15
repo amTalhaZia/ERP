@@ -29,7 +29,7 @@ class EmployeeController extends ApiController
     {
         Gate::authorize('viewAny', Employee::class);
 
-        $query = Employee::query()->with(self::RELATIONS);
+        $query = Employee::query()->visibleBranches()->with(self::RELATIONS);
         $this->applySearch($query, $request, ['first_name', 'last_name', 'email', 'employee_code', 'phone']);
         $this->applyFilters($query, $request, ['status', 'department_id', 'branch_id', 'designation_id', 'employment_type', 'manager_id']);
         $this->applyDateRange($query, $request, 'hired_at');
@@ -43,7 +43,7 @@ class EmployeeController extends ApiController
     {
         Gate::authorize('viewAny', Employee::class);
 
-        $rows = Employee::query()->employed()
+        $rows = Employee::query()->visibleBranches()->employed()
             ->with(['designation:id,title', 'department:id,name'])
             ->orderBy('last_name')->orderBy('first_name')
             ->get(['id', 'employee_code', 'first_name', 'last_name', 'email', 'department_id', 'branch_id', 'designation_id', 'manager_id', 'status', 'photo_path'])
@@ -57,7 +57,7 @@ class EmployeeController extends ApiController
     {
         Gate::authorize('viewAny', Employee::class);
 
-        $employees = Employee::query()->employed()
+        $employees = Employee::query()->visibleBranches()->employed()
             ->with(['designation:id,title', 'department:id,name'])
             ->orderBy('last_name')->orderBy('first_name')
             ->get(['id', 'employee_code', 'first_name', 'last_name', 'email', 'department_id', 'branch_id', 'designation_id', 'manager_id', 'status', 'photo_path']);

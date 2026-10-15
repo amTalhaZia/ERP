@@ -28,7 +28,7 @@ class AttendanceController extends ApiController
     {
         Gate::authorize('viewAny', AttendanceRecord::class);
 
-        $query = AttendanceRecord::query()->with(self::EMPLOYEE_COLUMNS);
+        $query = AttendanceRecord::query()->visibleBranches()->with(self::EMPLOYEE_COLUMNS);
         $this->applyFilters($query, $request, ['employee_id', 'status', 'source']);
         $this->applyDateRange($query, $request, 'date');
 
@@ -116,7 +116,7 @@ class AttendanceController extends ApiController
             'department_id' => ['nullable', 'integer'],
         ]);
 
-        $rows = AttendanceRecord::query()
+        $rows = AttendanceRecord::query()->visibleBranches()
             ->join('employees', 'employees.id', '=', 'attendance_records.employee_id')
             ->whereBetween('attendance_records.date', [$validated['from'], $validated['to']])
             ->when($validated['department_id'] ?? null, fn (Builder $q, int $id) => $q->where('employees.department_id', $id))

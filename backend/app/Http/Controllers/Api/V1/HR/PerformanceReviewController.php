@@ -26,7 +26,7 @@ class PerformanceReviewController extends ApiController
     {
         Gate::authorize('viewAny', PerformanceReview::class);
 
-        $query = PerformanceReview::query()->with(self::RELATIONS);
+        $query = PerformanceReview::query()->visibleBranches()->with(self::RELATIONS);
 
         if (! Gate::allows('viewAll', PerformanceReview::class)) {
             $userId = $request->user()->id;

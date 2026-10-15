@@ -7,6 +7,7 @@ use App\Http\Requests\Sales\Rules\CompanyMember;
 use App\Models\Inventory\Warehouse;
 use App\Models\Sales\Customer;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSalesOrderRequest extends FormRequest
@@ -38,7 +39,7 @@ class StoreSalesOrderRequest extends FormRequest
             'shipping_state' => ['nullable', 'string', 'max:100'],
             'shipping_postal_code' => ['nullable', 'string', 'max:20'],
             'shipping_country' => ['nullable', 'string', 'size:2'],
-            'warehouse_id' => ['nullable', 'integer', new TenantExists(Warehouse::class)],
+            'warehouse_id' => ['nullable', 'integer', new TenantExists(Warehouse::class), new WithinAccessibleBranch(Warehouse::class)],
             'notes' => ['nullable', 'string', 'max:5000'],
             'terms' => ['nullable', 'string', 'max:5000'],
             'sales_rep_id' => ['nullable', 'integer', new CompanyMember],

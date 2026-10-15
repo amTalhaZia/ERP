@@ -17,7 +17,7 @@ class PurchaseReturnPolicy
 
     public function view(User $user, PurchaseReturn $return): bool
     {
-        return $this->sameTenant($return) && $this->viewAny($user);
+        return $this->sameTenant($return) && $this->inAllowedBranch($return) && $this->viewAny($user);
     }
 
     public function create(User $user): bool

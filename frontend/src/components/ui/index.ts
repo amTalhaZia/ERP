@@ -39,7 +39,7 @@ export { Kbd, type KbdProps } from './Kbd';
 export { Spinner, type SpinnerProps, type SpinnerSize } from './Spinner';
 export { Skeleton, SkeletonTable, SkeletonCard, type SkeletonProps, type SkeletonTableProps, type SkeletonCardProps, type SkeletonVariant } from './Skeleton';
 export { EmptyState, type EmptyStateProps } from './EmptyState';
-export { ErrorState, errorMessage, type ErrorStateProps } from './ErrorState';
+export { ErrorState, AccessDeniedState, NotFoundState, errorMessage, type ErrorStateProps } from './ErrorState';
 export { Alert, InlineMessage, type AlertProps, type AlertVariant, type InlineMessageProps } from './Alert';
 export { MetricCard, Sparkline, type MetricCardProps, type MetricChange } from './MetricCard';
 

@@ -28,7 +28,7 @@ class PurchaseOrderController extends ApiController
     {
         Gate::authorize('viewAny', PurchaseOrder::class);
 
-        $query = PurchaseOrder::query()->with(['supplier:id,code,name'])->withCount(['lines', 'goodsReceipts']);
+        $query = PurchaseOrder::query()->visibleBranches()->with(['supplier:id,code,name'])->withCount(['lines', 'goodsReceipts']);
         $this->applySearch($query, $request, ['number', 'notes', 'delivery_address']);
         $this->applyFilters($query, $request, ['status', 'supplier_id', 'requisition_id', 'branch_id', 'warehouse_id', 'currency']);
         $this->applyDateRange($query, $request, 'order_date');

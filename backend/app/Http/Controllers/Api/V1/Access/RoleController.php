@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\Access\StoreRoleRequest;
 use App\Http\Resources\Access\RoleResource;
 use App\Models\Role;
+use App\Models\User;
+use App\Support\Access\PrivilegeEscalationGuard;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -22,13 +24,14 @@ use Illuminate\Validation\ValidationException;
  * (the model is not globally scoped), so another company's role id is a 404.
  *
  * System roles keep their name/description; their permissions may be tuned
- * except for `company.owner`, which is fully locked.
+ * except for `company.owner`, which is fully locked. PrivilegeEscalationGuard
+ * stops non-owners granting permissions they lack or editing a role they hold.
  */
 class RoleController extends ApiController
 {
     private const LOCKED_SLUG = 'company.owner';
 
-    public function __construct(private readonly TenantContext $tenant) {}
+    public function __construct(private readonly TenantContext $tenant, private readonly PrivilegeEscalationGuard $guard) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -51,6 +54,10 @@ class RoleController extends ApiController
         Gate::authorize('create', Role::class);
 
         $data = $request->validated();
+
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->guard->assertCanSetRolePermissions($actor, (int) $this->tenant->id(), null, $data['permission_ids'] ?? []);
 
         $role = DB::transaction(function () use ($data, $sync): Role {
             $role = Role::query()->create([
@@ -99,6 +106,12 @@ class RoleController extends ApiController
             if ($errors !== []) {
                 throw ValidationException::withMessages($errors);
             }
+        }
+
+        if (array_key_exists('permission_ids', $data)) {
+            /** @var User $actor */
+            $actor = $request->user();
+            $this->guard->assertCanSetRolePermissions($actor, (int) $this->tenant->id(), $role, $data['permission_ids']);
         }
 
         DB::transaction(function () use ($role, $data, $sync): void {

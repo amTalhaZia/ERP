@@ -28,7 +28,8 @@ class LeaveRequestPolicy
             return false;
         }
 
-        return $this->viewAll($user) || $this->ownsEmployee($user, $leaveRequest->employee_id);
+        return ($this->viewAll($user) && $this->inAllowedBranch($leaveRequest))
+            || $this->ownsEmployee($user, $leaveRequest->employee_id);
     }
 
     public function create(User $user): bool
@@ -54,7 +55,8 @@ class LeaveRequestPolicy
             return false;
         }
 
-        return $this->ownsEmployee($user, $leaveRequest->employee_id) || $this->can($user, 'leave.manage');
+        return $this->ownsEmployee($user, $leaveRequest->employee_id)
+            || ($this->can($user, 'leave.manage') && $this->inAllowedBranch($leaveRequest));
     }
 
     /** The requester, or anyone who may see all requests (leave.view / approve / manage). */

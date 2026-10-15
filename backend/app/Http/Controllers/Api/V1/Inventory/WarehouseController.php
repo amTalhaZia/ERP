@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\Inventory\StoreWarehouseRequest;
 use App\Http\Resources\Inventory\WarehouseResource;
 use App\Models\Inventory\Warehouse;
-use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -19,11 +18,7 @@ class WarehouseController extends ApiController
     {
         Gate::authorize('viewAny', Warehouse::class);
 
-        $query = Warehouse::query()->with('branch:id,name')->withCount('locations');
-
-        if (($allowed = app(TenantContext::class)->allowedBranchIds()) !== null) {
-            $query->where(fn ($q) => $q->whereNull('branch_id')->orWhereIn('branch_id', $allowed));
-        }
+        $query = Warehouse::query()->visibleBranches()->with('branch:id,name')->withCount('locations');
 
         $this->applySearch($query, $request, ['name', 'code', 'city']);
         $this->applyFilters($query, $request, ['is_active', 'is_default', 'branch_id', 'country']);
@@ -40,11 +35,7 @@ class WarehouseController extends ApiController
     {
         Gate::authorize('viewAny', Warehouse::class);
 
-        $query = Warehouse::query()->where('is_active', true);
-
-        if (($allowed = app(TenantContext::class)->allowedBranchIds()) !== null) {
-            $query->where(fn ($q) => $q->whereNull('branch_id')->orWhereIn('branch_id', $allowed));
-        }
+        $query = Warehouse::query()->visibleBranches()->where('is_active', true);
 
         $warehouses = $query->orderByDesc('is_default')->orderBy('name')->orderBy('id')
             ->get(['id', 'name', 'code', 'is_default'])

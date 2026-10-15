@@ -4,6 +4,7 @@ namespace App\Http\Requests\HR;
 
 use App\Models\HR\Employee;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,7 +26,7 @@ class StorePerformanceReviewRequest extends FormRequest
         $required = $creating ? 'required' : 'sometimes';
 
         return [
-            'employee_id' => [$creating ? 'required' : 'prohibited', 'integer', new TenantExists(Employee::class)],
+            'employee_id' => [$creating ? 'required' : 'prohibited', 'integer', new TenantExists(Employee::class), new WithinAccessibleBranch(Employee::class)],
             'reviewer_id' => [$required, 'integer', Rule::exists('company_user', 'user_id')->where('company_id', $companyId)],
             'cycle' => [$required, 'string', 'max:20'],
             'period_start' => [$required, 'date'],

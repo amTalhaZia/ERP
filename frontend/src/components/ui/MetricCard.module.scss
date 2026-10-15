@@ -5,6 +5,7 @@
   flex-direction: column;
   gap: var(--space-2);
   min-width: 0;
+  container-type: inline-size;
   padding: var(--space-4);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -81,15 +82,23 @@
   letter-spacing: -0.02em;
   color: var(--color-text);
   min-width: 0;
-  overflow-wrap: anywhere;
+  // Never break inside a number ("$9,49 / 7.00"); shrink the type instead.
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // Scale with the card (container query units), capped at the design size.
+  font-size: clamp(1.0625rem, 8.5cqi, var(--text-2xl));
 
   @include up(lg) {
-    font-size: var(--text-3xl);
+    font-size: clamp(1.0625rem, 8.5cqi, var(--text-3xl));
   }
 }
 
 .sparkline {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 48px;
   width: 120px;
   height: 32px;
   overflow: visible;

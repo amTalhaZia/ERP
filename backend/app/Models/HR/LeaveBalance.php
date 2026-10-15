@@ -4,6 +4,7 @@ namespace App\Models\HR;
 
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\HR\LeaveBalanceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class LeaveBalance extends Model
 {
     /** @use HasFactory<LeaveBalanceFactory> */
-    use Auditable, BelongsToCompany, HasFactory;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['employee'];
 
     protected function casts(): array
     {

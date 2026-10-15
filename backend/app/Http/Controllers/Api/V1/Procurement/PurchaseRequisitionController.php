@@ -30,7 +30,7 @@ class PurchaseRequisitionController extends ApiController
     {
         Gate::authorize('viewAny', PurchaseRequisition::class);
 
-        $query = PurchaseRequisition::query()->with(self::HEADER_RELATIONS)->withCount('lines');
+        $query = PurchaseRequisition::query()->visibleBranches()->with(self::HEADER_RELATIONS)->withCount('lines');
 
         // Requesters without a review permission only ever see their own documents.
         if (! $request->user()->hasAnyPermission(['requisitions.view', 'requisitions.approve']) || $request->boolean('mine')) {

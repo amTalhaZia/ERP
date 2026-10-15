@@ -28,7 +28,7 @@ class PerformanceReviewPolicy
             return false;
         }
 
-        return $this->viewAll($user)
+        return ($this->viewAll($user) && $this->inAllowedBranch($review))
             || $review->reviewer_id === $user->id
             || $this->ownsEmployee($user, $review->employee_id);
     }

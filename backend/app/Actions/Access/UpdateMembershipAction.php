@@ -5,6 +5,7 @@ namespace App\Actions\Access;
 use App\Models\CompanyUser;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\Access\PrivilegeEscalationGuard;
 use App\Support\Audit\AuditLogger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -16,7 +17,7 @@ use Illuminate\Validation\ValidationException;
  */
 class UpdateMembershipAction
 {
-    public function __construct(private readonly AuditLogger $audit) {}
+    public function __construct(private readonly AuditLogger $audit, private readonly PrivilegeEscalationGuard $guard) {}
 
     /**
      * @param  array{role_ids?: array<int, int>, branch_ids?: array<int, int>|null, is_active?: bool}  $data
@@ -33,6 +34,11 @@ class UpdateMembershipAction
         $newRoleIds = array_key_exists('role_ids', $data)
             ? collect($data['role_ids'])->map(fn ($id) => (int) $id)->unique()->values()
             : null;
+
+        if ($newRoleIds !== null) {
+            $currentRoleIds = DB::table('role_user')->where('user_id', $membership->user_id)->where('company_id', $companyId)->pluck('role_id');
+            $this->guard->assertCanAssignRoles($actor, $companyId, $newRoleIds, $currentRoleIds);
+        }
 
         if ($isSelf && $newRoleIds !== null) {
             $keepsUserManagement = Role::forTenant($companyId)

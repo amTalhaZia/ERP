@@ -157,14 +157,14 @@ export function BalanceCards({ balances }: { balances: LeaveBalance[] }) {
   );
 }
 
-function RequestRows({ rows, onCancel }: { rows: LeaveRequest[]; onCancel?: (r: LeaveRequest) => void }) {
+function RequestRows({ rows, onCancel, highlightId }: { rows: LeaveRequest[]; onCancel?: (r: LeaveRequest) => void; highlightId?: number | null }) {
   return (
     <div className={crud.tableScroll}>
       <table className={crud.lines}>
         <thead><tr><th>Type</th><th>Dates</th><th className={crud.r}>Days</th><th>Status</th><th>Notes</th>{onCancel && <th aria-label="Actions" />}</tr></thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id}>
+            <tr key={r.id} className={r.id === highlightId ? styles.highlightRow : undefined} aria-current={r.id === highlightId ? 'true' : undefined}>
               <td><span className={styles.row}><Swatch color={r.leave_type?.color} />{r.leave_type?.name}</span></td>
               <td>{formatDate(r.start_date)}{r.end_date !== r.start_date ? ` – ${formatDate(r.end_date)}` : ''}</td>
               <td className={crud.r}>{n1(r.days)}</td>
@@ -182,7 +182,7 @@ function RequestRows({ rows, onCancel }: { rows: LeaveRequest[]; onCancel?: (r: 
   );
 }
 
-export function MyLeave({ canRequest }: { canRequest: boolean }) {
+export function MyLeave({ canRequest, highlightId }: { canRequest: boolean; highlightId?: number | null }) {
   const me = useMyEmployee();
   const [requesting, setRequesting] = useState(false);
   const [cancelling, setCancelling] = useState<LeaveRequest | null>(null);
@@ -213,7 +213,7 @@ export function MyLeave({ canRequest }: { canRequest: boolean }) {
           ) : !requests.data?.data.length ? (
             <EmptyState size="sm" title="No leave requests yet" />
           ) : (
-            <RequestRows rows={requests.data.data} onCancel={setCancelling} />
+            <RequestRows rows={requests.data.data} onCancel={setCancelling} highlightId={highlightId} />
           )}
         </CardBody>
       </Card>
@@ -237,7 +237,7 @@ export function MyLeave({ canRequest }: { canRequest: boolean }) {
 
 // ---- Approvals & all requests -------------------------------------------------------------
 
-export function RequestsTable({ mode, canApprove, canManage }: { mode: 'approvals' | 'all'; canApprove: boolean; canManage: boolean }) {
+export function RequestsTable({ mode, canApprove, canManage, highlightId }: { mode: 'approvals' | 'all'; canApprove: boolean; canManage: boolean; highlightId?: number | null }) {
   const list = useListState({ sort: mode === 'approvals' ? 'start_date' : '-created_at' });
   const { state, update, clearFilters, activeFilterCount } = list;
   const me = useMyEmployee();
@@ -298,6 +298,7 @@ export function RequestsTable({ mode, canApprove, canManage }: { mode: 'approval
         isLoading={query.isLoading || (query.isFetching && query.isPlaceholderData)}
         error={query.error}
         onRetry={() => void query.refetch()}
+        rowClassName={(r) => (r.id === highlightId ? styles.highlightRow : undefined)}
         sort={state.sort}
         onSortChange={(sort) => update({ sort })}
         pagination={meta ? { ...paginationFromMeta(meta), onPageChange: (page: number) => update({ page }, false), onPerPageChange: (perPage: number) => update({ perPage }) } : undefined}

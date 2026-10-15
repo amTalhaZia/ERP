@@ -99,7 +99,7 @@ final class SalesReports
             ->toBase()->get()
             ->keyBy(fn ($row) => (string) ($row->grp ?? ''));
 
-        $orders = SalesOrder::query()
+        $orders = SalesOrder::query()->visibleBranches()
             ->whereBetween('sales_orders.order_date', [$from->toDateString(), $to->toDateString()])
             ->whereIn('sales_orders.status', array_map(fn (SalesOrderStatus $s) => $s->value, SalesOrderStatus::approvedOrLater()))
             ->groupByRaw($orderKey)
@@ -173,7 +173,7 @@ final class SalesReports
 
         $quotes = Quotation::query()->where('customer_id', $customer->id)
             ->groupBy('status')->selectRaw('status, COUNT(*) AS cnt, COALESCE(SUM(total), 0) AS total')->toBase()->get();
-        $orders = SalesOrder::query()->where('customer_id', $customer->id)
+        $orders = SalesOrder::query()->visibleBranches()->where('customer_id', $customer->id)
             ->groupBy('status')->selectRaw('status, COUNT(*) AS cnt, COALESCE(SUM(total), 0) AS total')->toBase()->get();
         $opps = Opportunity::query()->where('customer_id', $customer->id)
             ->groupBy('status')->selectRaw('status, COUNT(*) AS cnt, COALESCE(SUM(value), 0) AS total')->toBase()->get();
@@ -187,7 +187,7 @@ final class SalesReports
             'quotations' => $group($quotes),
             'sales_orders' => $group($orders),
             'opportunities' => $group($opps),
-            'last_order_date' => SalesOrder::query()->where('customer_id', $customer->id)->max('order_date'),
+            'last_order_date' => SalesOrder::query()->visibleBranches()->where('customer_id', $customer->id)->max('order_date'),
             'outstanding_balance' => $balance['outstanding'],
             'overdue_balance' => $balance['overdue'],
             'open_invoices_count' => $balance['open_count'],

@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use App\Models\Branch;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Inventory\WarehouseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +22,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Warehouse extends Model
 {
     /** @use HasFactory<WarehouseFactory> */
-    use Auditable, BelongsToCompany, HasFactory, SoftDeletes;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches, SoftDeletes;
+
+    /** Branch restriction: direct `branch_id` column. */
+    protected string $branchColumn = 'branch_id';
 
     protected function casts(): array
     {

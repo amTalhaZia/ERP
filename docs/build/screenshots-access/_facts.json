@@ -1,0 +1,23 @@
+{
+  "created": [
+    "Company \"Guide Demo Co (Demo)\" (is_demo, PKR, Asia/Karachi) with owner guide.owner@guidedemo.test — via Platform → Companies → New company",
+    "User sub.admin@northwind.test — Company Administrator in Northwind, all branches (invited by owner@northwind.test)",
+    "User branch.hr@northwind.test — HR Manager in Northwind, restricted to Boston Office (invited by sub.admin@northwind.test)",
+    "User branch.accountant@northwind.test — Accountant in Northwind, restricted to Chicago Office (invited by sub.admin@northwind.test)",
+    "User branch.manager@northwind.test — Department Manager in Northwind, restricted to Austin Office (invited by sub.admin@northwind.test)",
+    "Role \"Branch Sales Supervisor (Demo)\" in Northwind: View executive dashboard, View customers, View quotations, Manage quotations, View sales orders, View reports",
+    "User branch.sales@northwind.test — Branch Sales Supervisor (Demo), restricted to Boston Office",
+    "branch.manager@northwind.test: added role \"Employee\" (role change demo)",
+    "branch.accountant@northwind.test: removed from Northwind (remove-from-company demo; the account itself remains)"
+  ],
+  "restored": [
+    "branch.sales@northwind.test: membership deactivated for screenshots, then re-activated",
+    "branch.sales@northwind.test: account deactivated at platform level for screenshots, then reactivated"
+  ],
+  "issues": [],
+  "notes": [
+    "Platform-admin confirm dialog was cancelled — no platform role was granted.",
+    "guide.owner@guidedemo.test set a password through the real /reset-password link from laravel.log."
+  ],
+  "resetLogExcerpt": "[2026-10-15 20:06:46] local.DEBUG: From: Enterprise ERP <hello@example.com>\r\nTo: guide.owner@guidedemo.test\r\nSubject: Reset your password\r\nYou are receiving this email because we received a password reset request for your account.\r\nReset Password: http://localhost:3000/reset-password?token=<redacted>&email=guide.owner%40guidedemo.test\r\nThis password reset link will expire in 60 minutes.\r\nIf you did not request a password reset, no further action is required.\r\nIf you're having trouble clicking the \"Reset Password\" button, copy and paste the URL below\r\ninto your web browser: [http://localhost:3000/reset-password?token=<redacted>&email=guide.owner%40guidedemo.test](http://localhost:3000/reset-password?token=<redacted>&email=guide.owner%40guidedemo.test)\r\n<p style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">You are receiving this email because we received a password reset request for your account.</p>\r\n<a href=\"http://localhost:3000/reset-password?token=<redacted>&amp;email=guide.owner%40guidedemo.test\" class=\"button button-primary\" target=\"_blank\" rel=\"noopener\" style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -webkit-text-size-adjust: none; border-radius: 4px; color: #fff; display: inline-block; overflow: hidden; text-decoration: none; background-color: #18181b; border-bottom: 8px solid #18181b; border-left: 18px solid #18181b; border-right: 18px solid #18181b; border-top: 8px solid #18181b; word-break: break-all;\">Reset Password</a>\r\n<p style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">This password reset link will expire in 60 minutes.</p>\r"
+}

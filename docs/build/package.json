@@ -7,7 +7,9 @@
     "screenshots": "node capture.mjs",
     "guide": "node build-guide.mjs",
     "api": "node build-api.mjs",
-    "all": "node capture.mjs && node build-guide.mjs && node build-api.mjs"
+    "all": "node capture.mjs && node build-guide.mjs && node build-api.mjs",
+    "access:capture": "node capture-access.mjs",
+    "access": "node build-access.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.48.2",

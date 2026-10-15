@@ -25,7 +25,7 @@ class GoodsReceiptController extends ApiController
     {
         Gate::authorize('viewAny', GoodsReceipt::class);
 
-        $query = GoodsReceipt::query()->with(['purchaseOrder:id,number,supplier_id,status', 'receiver:id,name'])->withCount('lines');
+        $query = GoodsReceipt::query()->visibleBranches()->with(['purchaseOrder:id,number,supplier_id,status', 'receiver:id,name'])->withCount('lines');
         $this->applySearch($query, $request, ['number', 'supplier_delivery_note']);
         $this->applyFilters($query, $request, ['status', 'purchase_order_id', 'warehouse_id', 'received_by']);
         $this->applyDateRange($query, $request, 'received_date');

@@ -1,2 +1,4 @@
 node_modules/
 screenshots/*.png
+screenshots-access/*.png
+.cache/

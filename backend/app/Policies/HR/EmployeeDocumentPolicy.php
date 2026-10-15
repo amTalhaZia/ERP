@@ -31,7 +31,7 @@ class EmployeeDocumentPolicy
             return false;
         }
 
-        if ($this->can($user, 'employees.documents.view')) {
+        if ($this->can($user, 'employees.documents.view') && $this->inAllowedBranch($document)) {
             return true;
         }
 

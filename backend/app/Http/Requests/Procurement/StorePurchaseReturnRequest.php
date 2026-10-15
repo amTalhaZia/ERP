@@ -6,6 +6,7 @@ use App\Enums\Procurement\PurchaseReturnReason;
 use App\Models\Procurement\GoodsReceipt;
 use App\Models\Procurement\PurchaseOrder;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,8 +25,8 @@ class StorePurchaseReturnRequest extends FormRequest
         $required = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'purchase_order_id' => [$this->isMethod('POST') ? 'required' : 'prohibited', 'integer', new TenantExists(PurchaseOrder::class)],
-            'goods_receipt_id' => ['nullable', 'integer', new TenantExists(GoodsReceipt::class)],
+            'purchase_order_id' => [$this->isMethod('POST') ? 'required' : 'prohibited', 'integer', new TenantExists(PurchaseOrder::class), new WithinAccessibleBranch(PurchaseOrder::class)],
+            'goods_receipt_id' => ['nullable', 'integer', new TenantExists(GoodsReceipt::class), new WithinAccessibleBranch(GoodsReceipt::class)],
             'return_date' => [$required, 'date'],
             'reason' => [$required, Rule::enum(PurchaseReturnReason::class)],
             'notes' => ['nullable', 'string', 'max:2000'],

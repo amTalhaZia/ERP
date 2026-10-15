@@ -7,6 +7,7 @@ use App\Enums\Procurement\PurchaseReturnStatus;
 use App\Models\User;
 use App\Support\Audit\Auditable;
 use App\Support\Tenancy\BelongsToCompany;
+use App\Support\Tenancy\RestrictsToAllowedBranches;
 use Database\Factories\Procurement\PurchaseReturnFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PurchaseReturn extends Model
 {
     /** @use HasFactory<PurchaseReturnFactory> */
-    use Auditable, BelongsToCompany, HasFactory;
+    use Auditable, BelongsToCompany, HasFactory, RestrictsToAllowedBranches;
+
+    /** @var array<int, string> branch restriction derived via these parent relations */
+    protected array $branchRelations = ['purchaseOrder'];
 
     protected function casts(): array
     {

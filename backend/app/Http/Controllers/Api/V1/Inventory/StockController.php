@@ -73,7 +73,7 @@ class StockController extends ApiController
     {
         Gate::authorize('viewAny', StockLevel::class);
 
-        $query = StockLevel::query()->with([
+        $query = StockLevel::query()->visibleBranches()->with([
             'product:id,sku,name,uom_id,reorder_level,category_id',
             'product.uom:id,name,symbol',
             'warehouse:id,name,code',
@@ -109,7 +109,7 @@ class StockController extends ApiController
     {
         Gate::authorize('viewAny', StockMovement::class);
 
-        $query = StockMovement::query()->with([
+        $query = StockMovement::query()->visibleBranches()->with([
             'product:id,sku,name',
             'warehouse:id,name,code',
             'batch:id,batch_number,expires_at',

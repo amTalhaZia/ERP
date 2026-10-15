@@ -6,6 +6,7 @@ use App\Models\Inventory\Product;
 use App\Models\Inventory\StorageLocation;
 use App\Models\Inventory\Warehouse;
 use App\Support\Tenancy\Rules\TenantExists;
+use App\Support\Tenancy\Rules\WithinAccessibleBranch;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -25,7 +26,7 @@ class ReceiveStockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'warehouse_id' => ['required', 'integer', new TenantExists(Warehouse::class, where: ['is_active' => true])],
+            'warehouse_id' => ['required', 'integer', new TenantExists(Warehouse::class, where: ['is_active' => true]), new WithinAccessibleBranch(Warehouse::class)],
             'location_id' => [
                 'nullable', 'integer',
                 new TenantExists(StorageLocation::class, where: ['warehouse_id' => (int) $this->input('warehouse_id')]),

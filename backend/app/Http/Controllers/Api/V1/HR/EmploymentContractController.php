@@ -26,7 +26,7 @@ class EmploymentContractController extends ApiController
     {
         Gate::authorize('viewAny', EmploymentContract::class);
 
-        $query = EmploymentContract::query()->with('employee:id,first_name,last_name,employee_code');
+        $query = EmploymentContract::query()->visibleBranches()->with('employee:id,first_name,last_name,employee_code');
         $this->applyFilters($query, $request, ['employee_id', 'status', 'contract_type']);
         $this->applyDateRange($query, $request, 'start_date');
         $this->applySort($query, $request, ['start_date', 'end_date', 'salary', 'status', 'created_at'], '-start_date');

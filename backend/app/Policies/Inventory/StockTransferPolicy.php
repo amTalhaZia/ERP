@@ -17,7 +17,7 @@ class StockTransferPolicy
 
     public function view(User $user, StockTransfer $transfer): bool
     {
-        return $this->sameTenant($transfer) && $this->viewAny($user);
+        return $this->sameTenant($transfer) && $this->inAllowedBranch($transfer) && $this->viewAny($user);
     }
 
     public function create(User $user): bool
