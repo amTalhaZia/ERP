@@ -19,7 +19,7 @@ ${h2('sec-403', '6.2 403 aur 404 ka farq')}
 ${table(['Soorat', 'Server ka jawab', 'Screen par'], [
   ['Aap is company ke member hain lekin permission nahi', '<b>403 Forbidden</b>', `"Something went wrong — You don't have permission to perform this action." (${c('auth.forbidden')})`],
   ['Kisi <b>dusri company</b> ke record ka ID try kiya', '<b>404 Not found</b>', '"Page not found" / record nahi milta'],
-  ['Platform pages (${c("/platform/…")}) bina platform role ke', '<b>404</b>', 'Page mojood hi nahi lagta'],
+  [`Platform pages (${c('/platform/…')}) bina platform role ke`,'<b>404</b>', 'Page mojood hi nahi lagta'],
   ['Session khatam / login nahi', '<b>401</b>', 'Login page par wapas'],
   ['Bohat zyada login attempts', '<b>429</b>', '"Too many attempts" — thori der baad try karein'],
 ], { caption: 'Error codes ka matlab' })}

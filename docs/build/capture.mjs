@@ -48,7 +48,7 @@ const ERROR_TEXTS = [
 async function settle(page, extra = 800) {
   await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
   // Wait (bounded) for skeleton placeholders to disappear.
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const n = await visibleSkeletons(page);
     if (!n) break;
     await page.waitForTimeout(500);
@@ -170,8 +170,8 @@ const ownerShots = [
   { name: 'owner-hr-employee-new', url: '/hr/employees/new' },
   { name: 'owner-hr-org-chart', url: '/hr/org-chart', wait: 1500 },
   { name: 'owner-hr-attendance', url: '/hr/attendance' },
-  { name: 'owner-hr-leave-approvals', url: '/hr/leave', action: clickTab(/^Approvals/) },
-  { name: 'owner-hr-leave-balances', url: '/hr/leave', action: clickTab('Balances') },
+  { name: 'owner-hr-leave-approvals', url: '/hr/leave?tab=approvals', wait: 2500 },
+  { name: 'owner-hr-leave-balances', url: '/hr/leave?tab=balances', wait: 2500 },
   { name: 'owner-hr-shifts', url: '/hr/shifts' },
   { name: 'owner-hr-performance', url: '/hr/performance' },
   { name: 'owner-hr-reports', url: '/hr/reports', wait: 1500 },
@@ -181,7 +181,7 @@ const ownerShots = [
   { name: 'owner-payroll-run-paid', url: '/payroll/runs/1' },
   { name: 'owner-payroll-components', url: '/payroll/structures' },
   { name: 'owner-payroll-structures', url: '/payroll/structures', action: clickTab('Salary structures') },
-  { name: 'owner-payroll-tax-tables', url: '/payroll/structures', action: clickTab('Tax tables') },
+  { name: 'owner-payroll-tax-tables', url: '/payroll/structures?tab=tax-tables', wait: 2500 },
   // Finance
   { name: 'owner-finance-accounts', url: '/finance/accounts' },
   { name: 'owner-finance-journals', url: '/finance/journals' },
@@ -302,7 +302,7 @@ const employeeShots = [
   { name: 'employee-attendance', url: '/hr/attendance' },
   { name: 'employee-payslips', url: '/payroll/my-payslips' },
   { name: 'employee-expenses', url: '/finance/expenses' },
-  { name: 'employee-projects-mytasks', url: '/projects', action: clickTab('My tasks') },
+  { name: 'employee-projects-mytasks', url: '/projects?view=mine', wait: 2500 },
   { name: 'employee-forbidden-invoices', url: '/finance/invoices', expectError: true },
   { name: 'employee-forbidden-invoice-detail', url: '/finance/invoices/11', expectError: true },
 ];

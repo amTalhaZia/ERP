@@ -1,0 +1,17 @@
+import { chromium } from 'playwright-core';
+const S = 'C:/Users/Adnan/AppData/Local/Temp/claude/c--Users-Adnan-ERP/c6e635ea-3f80-4c28-9024-d0f98e016545/scratchpad/state-owner@northwind.test.json';
+const browser = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' });
+const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 }, storageState: S })).newPage();
+await page.emulateMedia({ reducedMotion: 'reduce' });
+page.on('pageerror', e => console.log('pageerror:', e.stack.slice(0,500)));
+page.on('console', m => { if (m.type()==='error'||m.type()==='warning') console.log('console', m.type(), m.text().slice(0,300)); });
+page.on('request', r => { if (r.url().includes('/api/')) console.log('REQ', r.url().replace('http://localhost:8000','')); });
+page.on('response', r => { if (r.url().includes('/api/')) console.log('HTTP', r.status(), r.url().replace('http://localhost:8000','')); });
+await page.goto('http://localhost:3000/hr/leave', { waitUntil: 'networkidle' });
+await page.waitForTimeout(3000);
+console.log('--- click Approvals');
+await page.getByRole('tab', { name: /^Approvals/ }).click();
+await page.waitForTimeout(12000);
+console.log(page.url());
+console.log('has rows:', (await page.innerText('main')).includes('Showing'), 'skeletons:', await page.locator('[class*=skeleton i]').count()); await page.screenshot({path:'C:/Users/Adnan/AppData/Local/Temp/claude/c--Users-Adnan-ERP/c6e635ea-3f80-4c28-9024-d0f98e016545/scratchpad/dbg2.png'});
+await browser.close();

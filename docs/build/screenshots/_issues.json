@@ -1,5 +1,13 @@
 [
   {
+    "shot": "owner-payroll-tax-tables",
+    "url": "/payroll/structures?tab=tax-tables",
+    "login": "owner@northwind.test",
+    "errors": [],
+    "skeletons": 64,
+    "detail": ""
+  },
+  {
     "shot": "owner-hr-leave-approvals",
     "url": "/hr/leave?tab=approvals",
     "login": "owner@northwind.test",
@@ -13,14 +21,6 @@
     "login": "owner@northwind.test",
     "errors": [],
     "skeletons": 82,
-    "detail": ""
-  },
-  {
-    "shot": "owner-payroll-tax-tables",
-    "url": "/payroll/structures?tab=tax-tables",
-    "login": "owner@northwind.test",
-    "errors": [],
-    "skeletons": 64,
     "detail": ""
   },
   {
