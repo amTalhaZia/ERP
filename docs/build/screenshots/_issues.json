@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "shot": "owner-hr-leave-approvals",
+    "url": "/hr/leave?tab=approvals",
+    "login": "owner@northwind.test",
+    "errors": [],
+    "skeletons": 82,
+    "detail": ""
+  },
+  {
+    "shot": "owner-hr-leave-balances",
+    "url": "/hr/leave?tab=balances",
+    "login": "owner@northwind.test",
+    "errors": [],
+    "skeletons": 82,
+    "detail": ""
+  },
+  {
+    "shot": "owner-payroll-tax-tables",
+    "url": "/payroll/structures?tab=tax-tables",
+    "login": "owner@northwind.test",
+    "errors": [],
+    "skeletons": 64,
+    "detail": ""
+  },
+  {
+    "shot": "employee-projects-mytasks",
+    "url": "/projects?view=mine",
+    "login": "employee@northwind.test",
+    "errors": [],
+    "skeletons": 46,
+    "detail": ""
+  }
+]
