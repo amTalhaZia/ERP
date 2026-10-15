@@ -8,7 +8,7 @@ export default {
   render: () => `
 ${h2('acc-concepts', '5.1 Bunyadi concepts')}
 ${bullets([
-  `<b>Permission</b> — aik chhota sa haq, jaise "Approve invoices" (${c('invoices.approve')}) ya "View employees" (${c('employees.view')}). System mein ~90 permissions hain (Appendix B).`,
+  `<b>Permission</b> — aik chhota sa haq, jaise "Approve invoices" (${c('invoices.approve')}) ya "View employees" (${c('employees.view')}). System mein ~90 permissions hain (Appendix A.3).`,
   '<b>Role</b> — permissions ka aik bundle, jaise "Accountant" ya "HR Manager". User ko permissions direct nahi, roles ke zariye milti hain.',
   `<b>User ki access = us ke tamam roles ki permissions ka majmooa (union)</b>. Aik user ke do roles hon to dono ki permissions milti hain.`,
   '<b>Company-wise</b> — roles har company ke andar alag hote hain. Aik shakhs Company A mein Accountant aur Company B mein Employee ho sakta hai.',
