@@ -14,7 +14,7 @@ class DocumentAwaitingApproval extends Notification
     private const LABELS = [
         'invoice' => ['Invoice', '/finance/invoices/'],
         'bill' => ['Supplier bill', '/finance/bills/'],
-        'expense_claim' => ['Expense claim', '/finance/expense-claims/'],
+        'expense_claim' => ['Expense claim', '/finance/expenses/'],
     ];
 
     public function __construct(

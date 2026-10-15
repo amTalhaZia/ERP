@@ -35,7 +35,7 @@ class ExpenseClaimDecided extends Notification
             'body' => $approved
                 ? "Your claim for {$this->claim->currency} {$amount} was approved and is queued for reimbursement."
                 : "Your claim for {$this->claim->currency} {$amount} was rejected: {$this->claim->rejection_reason}",
-            'url' => "/finance/expense-claims/{$this->claim->id}",
+            'url' => "/finance/expenses/{$this->claim->id}",
             'company_id' => (int) $this->claim->company_id,
             'expense_claim_id' => $this->claim->id,
         ];

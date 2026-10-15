@@ -36,7 +36,7 @@ class LeaveRequestDecided extends Notification
             'body' => $approved
                 ? "Your {$typeName} request for {$range} ({$this->request->days} day(s)) was approved."
                 : "Your {$typeName} request for {$range} was rejected.".($this->request->rejection_reason ? " Reason: {$this->request->rejection_reason}" : ''),
-            'url' => "/hr/leave/{$this->request->id}",
+            'url' => "/hr/leave?request={$this->request->id}",
             'company_id' => (int) $this->request->company_id,
             'status' => $this->request->status->value,
         ];

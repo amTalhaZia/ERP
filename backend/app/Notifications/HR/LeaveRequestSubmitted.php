@@ -34,7 +34,7 @@ class LeaveRequestSubmitted extends Notification
             'type' => 'leave.submitted',
             'title' => 'Leave request awaiting approval',
             'body' => "{$this->employeeName} requested {$this->request->days} day(s) of leave ({$range}).",
-            'url' => "/hr/leave/{$this->request->id}",
+            'url' => "/hr/leave?tab=approvals&request={$this->request->id}",
             'company_id' => (int) $this->request->company_id,
         ];
     }

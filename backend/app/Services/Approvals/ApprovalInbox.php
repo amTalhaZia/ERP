@@ -197,7 +197,7 @@ class ApprovalInbox
         };
 
         $url = match ($type) {
-            'leave_request' => '/hr/leave?request='.$row->id,
+            'leave_request' => '/hr/leave?tab=approvals&request='.$row->id,
             'purchase_requisition' => '/procurement/requisitions/'.$row->id,
             'purchase_order' => '/procurement/orders/'.$row->id,
             'sales_order' => '/sales/orders/'.$row->id,

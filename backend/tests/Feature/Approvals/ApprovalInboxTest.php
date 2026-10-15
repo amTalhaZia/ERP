@@ -91,7 +91,7 @@ class ApprovalInboxTest extends TestCase
         $this->assertStringContainsString('Globex', $invoice['title']);
 
         $leave = $items->firstWhere('type', 'leave_request');
-        $this->assertSame('/hr/leave?request='.$ids['leave_request'], $leave['url']);
+        $this->assertSame('/hr/leave?tab=approvals&request='.$ids['leave_request'], $leave['url']);
         $this->assertNull($leave['amount']);
         $this->assertStringContainsString('Annual Leave', $leave['title']);
         $this->assertSame('/procurement/requisitions/'.$ids['purchase_requisition'], $items->firstWhere('type', 'purchase_requisition')['url']);

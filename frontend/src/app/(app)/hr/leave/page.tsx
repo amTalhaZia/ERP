@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Alert, PageHeader, Tab, TabList, TabPanel, Tabs } from '@/components/ui';
 import { useCan } from '@/lib/auth/useCan';
@@ -31,13 +31,17 @@ function LeaveInner() {
     { value: 'balances', label: 'Balances', show: canManage },
     { value: 'types', label: 'Leave types', show: canManage },
   ].filter((t) => t.show);
-  const requested = search.get('tab') ?? '';
+  // Local state seeded from the URL: the click is reflected immediately and never
+  // waits on the router (search-param navigations could hang on a pending RSC fetch).
+  const [selected, setSelected] = useState(() => search.get('tab') ?? '');
+  const requested = selected;
   const tab = tabs.some((t) => t.value === requested) ? requested : 'mine';
   const highlightId = Number(search.get('request')) || null;
 
   // Shallow URL update: switching tabs must be instant and never wait on a
   // server round-trip (the old router.replace() left the click looking ignored).
   const setTab = (t: string) => {
+    setSelected(t);
     const next = new URLSearchParams();
     if (t !== 'mine') next.set('tab', t);
     replaceSearchParams(pathname, next);
