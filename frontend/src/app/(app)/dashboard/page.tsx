@@ -20,6 +20,7 @@ import { useCan } from '@/lib/auth/useCan';
 import type { Permission } from '@/lib/auth/permissions';
 import { isPlatformOnly } from '@/lib/auth/home';
 import { formatCompact, formatDate, formatMoney, formatNumber, formatRelative, humanize } from '@/lib/format';
+import { UpcomingHolidays } from '@/features/hr/UpcomingHolidays';
 import styles from './dashboard.module.scss';
 
 type RangeKey = '30d' | 'mtd' | '90d' | 'ytd' | '12m';
@@ -126,6 +127,7 @@ export default function DashboardPage() {
       <div className={styles.page}>
         <PageHeader title={user?.name ? 'Welcome, ' + user.name.split(' ')[0] : 'Welcome'} description={company?.name} />
         <QuickLinks can={can} />
+        <UpcomingHolidays />
       </div>
     );
   }
@@ -216,6 +218,8 @@ export default function DashboardPage() {
           </section>
 
           {showQuickLinks && <QuickLinks can={can} />}
+
+          <UpcomingHolidays />
 
           {(hasFinance || showBranches) && (
           <section className={styles.grid2}>

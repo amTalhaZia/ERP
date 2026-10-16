@@ -1,0 +1,83 @@
+@use 'tokens' as *;
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  svg {
+    color: var(--color-primary);
+  }
+}
+
+.more {
+  @include text(sm, medium);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+
+    & + li {
+      border-top: 1px solid var(--color-divider);
+    }
+  }
+}
+
+.date {
+  width: 44px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  line-height: 1.1;
+
+  strong {
+    @include text(md, bold);
+  }
+
+  span {
+    @include text(xs, semibold);
+    text-transform: uppercase;
+  }
+}
+
+.what {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    @include text(sm, semibold);
+    @include truncate;
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+    @include truncate;
+  }
+}
+
+.when {
+  flex-shrink: 0;
+  @include text(xs, medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+
+  &[data-soon='true'] {
+    color: var(--color-success-text);
+  }
+}

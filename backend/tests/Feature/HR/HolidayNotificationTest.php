@@ -28,6 +28,14 @@ class HolidayNotificationTest extends TestCase
         Notification::assertNotSentTo($outsider, HolidayAnnounced::class);
     }
 
+    public function test_any_member_can_see_holidays_but_only_hr_can_add_them(): void
+    {
+        [$member, $company] = $this->userWith(['inventory.view']);
+
+        $this->actingAsIn($member, $company)->getJson('/api/v1/holidays')->assertOk();
+        $this->actingAsIn($member, $company)->postJson('/api/v1/holidays', ['name' => 'X', 'date' => now()->addDay()->toDateString()])->assertForbidden();
+    }
+
     public function test_branch_holiday_only_reaches_that_branch_and_past_or_opted_out_holidays_send_nothing(): void
     {
         Notification::fake();

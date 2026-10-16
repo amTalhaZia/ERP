@@ -10,9 +10,10 @@ class HolidayPolicy
 {
     use ChecksPermissions;
 
+    /** Holidays are not sensitive: every member of the company may see them (managing still needs shifts.manage). */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyPermission(['shifts.manage', 'attendance.view', 'employees.view', 'leave.request', 'leave.view']);
+        return true;
     }
 
     public function view(User $user, Holiday $holiday): bool
