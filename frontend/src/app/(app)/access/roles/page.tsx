@@ -2,17 +2,21 @@
 
 import { Suspense, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Lock, Pencil, Plus, ShieldCheck, Trash2 } from 'lucide-react';
+import { ChevronRight, Lock, Plus, Trash2, Users } from 'lucide-react';
 import {
-  Alert, Badge, Button, Card, CardBody, CardHeader, Checkbox, ConfirmDialog, Drawer, EmptyState, ErrorState, FormField, Input, PageHeader, SearchInput, Skeleton, Textarea,
+  Alert, Button, Checkbox, ConfirmDialog, Drawer, EmptyState, ErrorState, FormField, Input, PageHeader, SearchInput, Select, Skeleton, Textarea,
 } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import { useCan } from '@/lib/auth/useCan';
 import { humanize } from '@/lib/format';
+import { get } from '@/lib/api/client';
 import type { ApiError } from '@/lib/api/errors';
 import { useAppSelector } from '@/store';
 import { accessApi, roles, type Role } from '@/features/access/api';
+import { AREA_LABELS, groupRoles, roleIcon } from '@/features/access/roleLevels';
+import styles from './roles.module.scss';
 
-function RoleEditor({ role, open, onClose }: { role: Role | null; open: boolean; onClose: () => void }) {
+function RoleEditor({ role, open, onClose, allRoles }: { role: Role | null; open: boolean; onClose: () => void; allRoles: Role[] }) {
   const companyId = useAppSelector((s) => s.session.current_company?.id);
   const catalogue = useQuery({ queryKey: [companyId, 'permissions'], queryFn: accessApi.permissions, enabled: open, staleTime: 5 * 60_000 });
   const detail = roles.useOne(role?.id, { enabled: open && !!role });
@@ -23,6 +27,7 @@ function RoleEditor({ role, open, onClose }: { role: Role | null; open: boolean;
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [filter, setFilter] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [copying, setCopying] = useState(false);
   const [loadedFor, setLoadedFor] = useState<number | 'new' | null>(null);
 
   // Initialise the editor once the role detail (with permissions) arrives.
@@ -39,21 +44,38 @@ function RoleEditor({ role, open, onClose }: { role: Role | null; open: boolean;
   const modules = useMemo(() => {
     const term = filter.trim().toLowerCase();
     return (catalogue.data ?? [])
-      .map((m) => ({ ...m, permissions: m.permissions.filter((p) => !term || p.slug.includes(term) || p.description.toLowerCase().includes(term)) }))
+      .map((m) => ({
+        ...m,
+        permissions: m.permissions.filter(
+          (p) => !term || p.description.toLowerCase().includes(term) || (AREA_LABELS[m.module]?.label ?? m.module).toLowerCase().includes(term),
+        ),
+      }))
       .filter((m) => m.permissions.length > 0);
   }, [catalogue.data, filter]);
 
-  const toggle = (id: number, on: boolean) =>
+  const setMany = (ids: number[], on: boolean) =>
     setSelected((s) => {
       const n = new Set(s);
-      if (on) n.add(id);
-      else n.delete(id);
+      ids.forEach((id) => (on ? n.add(id) : n.delete(id)));
       return n;
     });
 
+  // "Start from an existing role" — copies its access so people tweak rather than build from zero.
+  const copyFrom = async (id: string) => {
+    if (!id) return;
+    setCopying(true);
+    try {
+      const r = await get<{ data: Role }>(`/roles/${id}`);
+      setSelected(new Set(r.data.permissions?.map((p) => p.id) ?? []));
+    } finally {
+      setCopying(false);
+    }
+  };
+
   const save = async () => {
     setError(null);
-    if (!name.trim()) return setError('Role name is required.');
+    if (!name.trim()) return setError('Please give the role a name.');
+    if (selected.size === 0) return setError('Tick at least one thing this role can do.');
     const body = { name: name.trim(), description: description.trim() || null, permission_ids: [...selected] };
     try {
       if (role) await update.mutateAsync({ id: role.id, body: role.is_system ? { ...body, name: role.name, description: role.description } : body });
@@ -64,74 +86,92 @@ function RoleEditor({ role, open, onClose }: { role: Role | null; open: boolean;
     }
   };
 
+  const count = locked ? (catalogue.data ?? []).reduce((n, m) => n + m.permissions.length, 0) : selected.size;
+
   return (
     <Drawer
       open={open}
       onClose={onClose}
       size="lg"
-      title={role ? role.name : 'New role'}
-      description={`${selected.size} permission${selected.size === 1 ? '' : 's'} selected`}
+      title={role ? role.name : 'Create a new role'}
+      description={role ? `Can do ${count} thing${count === 1 ? '' : 's'}` : 'Name the job, then tick what this person is allowed to do.'}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          {!locked && <Button onClick={save} loading={create.isPending || update.isPending}>{role ? 'Save role' : 'Create role'}</Button>}
+          <span className={styles.footCount}>{count} selected</span>
+          <Button variant="secondary" onClick={onClose}>{locked ? 'Close' : 'Cancel'}</Button>
+          {!locked && <Button onClick={save} loading={create.isPending || update.isPending}>{role ? 'Save changes' : 'Create role'}</Button>}
         </>
       }
     >
-      {locked && <Alert variant="info" icon={<Lock size={16} />} style={{ marginBottom: 16 }}>The Company Owner role always has every permission and cannot be edited.</Alert>}
-      {role?.is_system && !locked && <Alert variant="info" style={{ marginBottom: 16 }}>System role: the name is fixed, but you can adjust its permissions.</Alert>}
+      {locked && <Alert variant="info" icon={<Lock size={16} />} style={{ marginBottom: 16 }}>The Company Owner can always do everything. This role can’t be changed.</Alert>}
+      {role?.is_system && !locked && <Alert variant="info" style={{ marginBottom: 16 }}>This is a built-in role, so its name stays the same — but you can change what it is allowed to do.</Alert>}
       {error && <Alert variant="danger" style={{ marginBottom: 16 }}>{error}</Alert>}
-      <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
-        <FormField label="Name" required>
-          <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!!role?.is_system} maxLength={100} />
+
+      <div className={styles.editorTop}>
+        <FormField label="Role name" required hint={!role ? 'The job title, e.g. “Store Keeper” or “Cashier”.' : undefined}>
+          <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!!role?.is_system} maxLength={100} placeholder="e.g. Store Keeper" />
         </FormField>
-        <FormField label="Description">
-          <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} disabled={!!role?.is_system} maxLength={300} />
+        <FormField label="What does this person do?">
+          <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} disabled={!!role?.is_system} maxLength={300} placeholder="e.g. Receives goods and keeps the stock count correct." />
         </FormField>
+        {!locked && (
+          <FormField label="Start from an existing role" hint="Optional — copies its access, then you can tick or untick.">
+            <Select
+              aria-label="Copy access from"
+              placeholder={copying ? 'Copying…' : 'Choose a role to copy'}
+              value=""
+              disabled={copying}
+              onChange={(ev) => void copyFrom(ev.target.value)}
+              options={allRoles.filter((r) => !r.is_locked && r.id !== role?.id).map((r) => ({ value: String(r.id), label: r.name }))}
+            />
+          </FormField>
+        )}
       </div>
-      <SearchInput placeholder="Filter permissions" value={filter} onValueChange={setFilter} aria-label="Filter permissions" />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
+
+      <h3 className={styles.editorHeading}>What can they do?</h3>
+      <SearchInput placeholder="Search, e.g. invoices, leave, stock" value={filter} onValueChange={setFilter} aria-label="Search what this role can do" />
+      <div className={styles.areas}>
         {catalogue.isLoading || (role && detail.isLoading) ? (
           <Skeleton style={{ height: 300 }} />
+        ) : modules.length === 0 ? (
+          <EmptyState size="sm" title="Nothing matches your search" />
         ) : (
           modules.map((m) => {
             const ids = m.permissions.map((p) => p.id);
-            const all = ids.every((id) => selected.has(id));
-            const some = ids.some((id) => selected.has(id));
+            const on = locked ? ids.length : ids.filter((id) => selected.has(id)).length;
+            const area = AREA_LABELS[m.module];
+            const Icon = area?.icon;
             return (
-              <Card key={m.module}>
-                <CardHeader
-                  title={humanize(m.module)}
-                  actions={
-                    !locked && (
-                      <Checkbox
-                        label="All"
-                        checked={all}
-                        indeterminate={!all && some}
-                        onChange={(e) => setSelected((s) => {
-                          const n = new Set(s);
-                          ids.forEach((id) => (e.target.checked ? n.add(id) : n.delete(id)));
-                          return n;
-                        })}
-                      />
-                    )
-                  }
-                />
-                <CardBody>
-                  <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
-                    {m.permissions.map((p) => (
-                      <Checkbox
-                        key={p.id}
-                        checked={locked || selected.has(p.id)}
-                        disabled={locked}
-                        onChange={(e) => toggle(p.id, e.target.checked)}
-                        label={p.description}
-                        description={<code style={{ fontSize: 11 }}>{p.slug}</code>}
-                      />
-                    ))}
+              <section key={m.module} className={cn(styles.area, on > 0 && styles.areaOn)}>
+                <header className={styles.areaHead}>
+                  {Icon && <span className={styles.areaIcon} aria-hidden><Icon size={16} /></span>}
+                  <div className={styles.areaTitle}>
+                    <strong>{area?.label ?? humanize(m.module)}</strong>
+                    {area?.hint && <span>{area.hint}</span>}
                   </div>
-                </CardBody>
-              </Card>
+                  <span className={styles.areaCount}>{on}/{ids.length}</span>
+                  {!locked && (
+                    <Checkbox
+                      label="All"
+                      checked={on === ids.length}
+                      indeterminate={on > 0 && on < ids.length}
+                      onChange={(e) => setMany(ids, e.target.checked)}
+                    />
+                  )}
+                </header>
+                <div className={styles.perms}>
+                  {m.permissions.map((p) => (
+                    <Checkbox
+                      key={p.id}
+                      checked={locked || selected.has(p.id)}
+                      disabled={locked}
+                      onChange={(e) => setMany([p.id], e.target.checked)}
+                      label={p.description}
+                      title={p.slug}
+                    />
+                  ))}
+                </div>
+              </section>
             );
           })
         )}
@@ -147,52 +187,93 @@ function RolesInner() {
   const [editing, setEditing] = useState<Role | 'new' | null>(null);
   const [deleting, setDeleting] = useState<Role | null>(null);
   const canManage = can('roles.manage');
+  const list = useMemo(() => q.data?.data ?? [], [q.data]);
+  const groups = useMemo(() => groupRoles(list), [list]);
+  const most = Math.max(1, ...list.map((r) => r.permissions_count ?? 0));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div className={styles.page}>
       <PageHeader
         title="Roles & permissions"
-        description="Roles bundle permissions. A user’s access is the union of their roles in this company."
+        description="A role is a job type. It decides what a person can see and do. Give each person the role that matches their job."
         actions={canManage && <Button leftIcon={<Plus size={16} />} onClick={() => setEditing('new')}>New role</Button>}
       />
       {q.error ? (
         <ErrorState error={q.error} onRetry={() => void q.refetch()} />
       ) : q.isLoading ? (
-        <Skeleton style={{ height: 300 }} />
-      ) : !q.data?.data.length ? (
-        <EmptyState title="No roles" />
+        <div className={styles.grid}>{Array.from({ length: 6 }, (_, i) => <Skeleton key={i} style={{ height: 150 }} />)}</div>
+      ) : list.length === 0 ? (
+        <EmptyState title="No roles yet" />
       ) : (
-        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-          {q.data.data.map((r) => (
-            <Card key={r.id}>
-              <CardHeader
-                title={<span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><ShieldCheck size={16} color="var(--color-primary)" />{r.name}</span>}
-                actions={r.is_locked ? <Badge size="sm" variant="neutral"><Lock size={11} /> Locked</Badge> : r.is_system ? <Badge size="sm" variant="neutral">System</Badge> : <Badge size="sm" variant="primary">Custom</Badge>}
-              />
-              <CardBody>
-                <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', minHeight: 38 }}>{r.description ?? 'No description'}</p>
-                <div style={{ display: 'flex', gap: 16, fontSize: 13, margin: '12px 0', color: 'var(--color-text-muted)' }}>
-                  <span><strong style={{ color: 'var(--color-text)' }}>{r.users_count ?? 0}</strong> users</span>
-                  <span><strong style={{ color: 'var(--color-text)' }}>{r.permissions_count ?? 0}</strong> permissions</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Button size="sm" variant="secondary" leftIcon={<Pencil size={14} />} onClick={() => setEditing(r)}>{canManage && !r.is_locked ? 'Edit' : 'View'}</Button>
-                  {canManage && !r.is_system && (
-                    <Button size="sm" variant="ghost" leftIcon={<Trash2 size={14} />} onClick={() => setDeleting(r)} disabled={(r.users_count ?? 0) > 0} title={(r.users_count ?? 0) > 0 ? 'Remove users from this role first' : undefined}>
-                      Delete
-                    </Button>
-                  )}
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
+        groups.map((g) => (
+          <section key={g.key} className={cn(styles.group, styles[g.tone])}>
+            <header className={styles.groupHead}>
+              <span className={styles.dot} aria-hidden />
+              <h2>{g.title}</h2>
+              <span>{g.hint}</span>
+            </header>
+            <div className={styles.grid}>
+              {g.items.map((r) => {
+                const Icon = roleIcon(r.slug);
+                const people = r.users_count ?? 0;
+                const things = r.permissions_count ?? 0;
+                const editable = canManage && !r.is_locked;
+                return (
+                  <article key={r.id} className={styles.card}>
+                    <button type="button" className={styles.cardMain} onClick={() => setEditing(r)} aria-label={`${editable ? 'Change' : 'See'} what ${r.name} can do`}>
+                      <span className={styles.cardTop}>
+                        <span className={styles.icon} aria-hidden><Icon size={18} /></span>
+                        <span className={styles.tag}>
+                          {r.is_locked ? <><Lock size={11} /> Can’t be changed</> : r.is_system ? 'Built-in' : 'Made by you'}
+                        </span>
+                      </span>
+                      <span className={styles.name}>{r.name}</span>
+                      <span className={styles.desc}>{r.description ?? 'No description yet'}</span>
+                      <span className={styles.meter} aria-label={`Can do ${things} things`}>
+                        <span className={styles.meterLabel}>
+                          <span>Access</span>
+                          <span>{things} {things === 1 ? 'thing' : 'things'}</span>
+                        </span>
+                        <span className={styles.bar}><span style={{ width: `${Math.max(4, (things / most) * 100)}%` }} /></span>
+                      </span>
+                    </button>
+                    <footer className={styles.cardFoot}>
+                      <span className={styles.people}><Users size={14} /> {people} {people === 1 ? 'person' : 'people'}</span>
+                      {canManage && !r.is_system && (
+                        <button
+                          type="button"
+                          className={styles.iconBtn}
+                          onClick={() => setDeleting(r)}
+                          disabled={people > 0}
+                          title={people > 0 ? 'Move these people to another role first' : 'Delete role'}
+                          aria-label={`Delete ${r.name}`}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                      <button type="button" className={styles.open} onClick={() => setEditing(r)}>
+                        {editable ? 'Change access' : 'See access'} <ChevronRight size={14} />
+                      </button>
+                    </footer>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ))
       )}
-      <RoleEditor key={editing === null ? 'closed' : editing === 'new' ? 'new' : editing.id} open={editing !== null} role={editing === 'new' ? null : editing} onClose={() => setEditing(null)} />
+      <RoleEditor
+        key={editing === null ? 'closed' : editing === 'new' ? 'new' : editing.id}
+        open={editing !== null}
+        role={editing === 'new' ? null : editing}
+        allRoles={list}
+        onClose={() => setEditing(null)}
+      />
       <ConfirmDialog
         open={deleting !== null}
         onClose={() => setDeleting(null)}
-        title={`Delete role “${deleting?.name}”?`}
+        title={`Delete the “${deleting?.name}” role?`}
+        description="Nobody has this role right now, so nothing else changes."
         destructive
         confirmLabel="Delete role"
         onConfirm={async () => {

@@ -122,7 +122,8 @@ export function Topbar() {
               <Link href="/dashboard">Home</Link>
             </li>
             {trail.map((item, i) => (
-              <li key={item.href} aria-current={i === trail.length - 1 ? 'page' : undefined}>
+              // Index in the key: a group and its first child can share an href (e.g. /company).
+              <li key={`${i}:${item.href}`} aria-current={i === trail.length - 1 ? 'page' : undefined}>
                 {i === trail.length - 1 ? <span>{item.label}</span> : <Link href={item.href}>{item.label}</Link>}
               </li>
             ))}

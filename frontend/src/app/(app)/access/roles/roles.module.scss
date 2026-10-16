@@ -1,0 +1,339 @@
+@use 'tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+// Level accents — shared feel with the role picker in the invite form.
+.top {
+  --tone: var(--color-primary);
+  --tone-soft: var(--color-primary-soft);
+}
+
+.head {
+  --tone: var(--color-success);
+  --tone-soft: var(--color-success-soft);
+}
+
+.staff {
+  --tone: var(--color-info);
+  --tone-soft: var(--color-info-soft);
+}
+
+.custom {
+  --tone: var(--color-warning);
+  --tone-soft: var(--color-warning-soft);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  h2 {
+    margin: 0;
+    @include text(base, semibold);
+    color: var(--color-text);
+  }
+
+  > span:last-child {
+    @include text(sm);
+    color: var(--color-text-muted);
+
+    &::before {
+      content: '·';
+      margin-right: var(--space-2);
+    }
+  }
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+
+// Cards fill the row evenly at any width: 1 column on phones, up to 4 on wide screens.
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl, var(--radius-lg));
+  background: var(--color-surface);
+  overflow: hidden;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+
+  &:hover {
+    border-color: var(--tone);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  @include reduced-motion {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+.cardMain {
+  all: unset;
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--tone);
+    outline-offset: -2px;
+  }
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  display: grid;
+  place-items: center;
+  background: var(--tone-soft);
+  color: var(--tone);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-bg-subtle);
+  @include text(xs, medium);
+  color: var(--color-text-muted);
+}
+
+.name {
+  @include text(base, semibold);
+  color: var(--color-text);
+}
+
+.desc {
+  @include text(sm);
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  min-height: calc(1.45em * 2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.meter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: var(--space-2);
+}
+
+.meterLabel {
+  display: flex;
+  justify-content: space-between;
+  @include text(xs, medium);
+  color: var(--color-text-muted);
+
+  span:last-child {
+    color: var(--color-text);
+  }
+}
+
+.bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-bg-subtle);
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--tone);
+  }
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-bg-subtle);
+}
+
+.people {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  @include text(sm, medium);
+  color: var(--color-text-muted);
+  margin-right: auto;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.iconBtn,
+.open {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--tone);
+    outline-offset: 2px;
+  }
+}
+
+.iconBtn {
+  padding: 6px;
+  color: var(--color-text-muted);
+
+  &:hover:not(:disabled) {
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.open {
+  white-space: nowrap;
+  padding: 6px 10px;
+  @include text(sm, semibold);
+  color: var(--tone);
+
+  &:hover {
+    background: var(--tone-soft);
+  }
+}
+
+// ----- Editor drawer
+.editorTop {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.editorHeading {
+  margin: 0 0 var(--space-3);
+  @include text(base, semibold);
+}
+
+.footCount {
+  margin-right: auto;
+  @include text(sm, medium);
+  color: var(--color-text-muted);
+}
+
+.areas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.area {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.areaOn {
+  border-color: var(--color-primary-soft-border, var(--color-primary));
+}
+
+.areaHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.areaIcon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.areaTitle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    @include text(sm, semibold);
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+  }
+}
+
+.areaCount {
+  @include text(xs, semibold);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.perms {
+  display: grid;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+}

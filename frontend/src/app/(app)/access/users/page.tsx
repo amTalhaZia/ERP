@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { Mail, Pencil, Plus, UserMinus, UserPlus } from 'lucide-react';
 import {
-  Alert, Avatar, Badge, Button, Checkbox, ConfirmDialog, Drawer, FormField, FormGrid, Input, MenuItem, MenuSeparator, Select, StatusBadge, Switch, useToast,
+  Alert, Avatar, Badge, Button, Checkbox, ConfirmDialog, Drawer, FormField, FormGrid, FormSection, Input, MenuItem, MenuSeparator, Select, StatusBadge, Switch, useToast,
   type DataTableColumn,
 } from '@/components/ui';
 import { ListPage } from '@/components/crud/ListPage';
@@ -19,6 +19,7 @@ import type { ApiError } from '@/lib/api/errors';
 import { useAppSelector } from '@/store';
 import { selectBranches, selectUser } from '@/store/sessionSlice';
 import { accessApi, companyUsers, roles, type CompanyUser } from '@/features/access/api';
+import { RolePicker } from '@/features/access/RolePicker';
 import styles from '@/components/crud/crud.module.scss';
 
 const schema = z.object({
@@ -81,61 +82,54 @@ function UserForm({ open, user, onClose }: { open: boolean; user: CompanyUser | 
       <form id="user-form" onSubmit={handleSubmit(onSubmit)} noValidate>
         {formError && <Alert variant="danger" style={{ marginBottom: 16 }}>{formError}</Alert>}
         {!user && (
-          <FormGrid columns={2}>
-            <FormField label="Full name" required error={e.name?.message}><Input {...register('name')} autoFocus /></FormField>
-            <FormField label="Work email" required error={e.email?.message}><Input type="email" {...register('email')} /></FormField>
-          </FormGrid>
+          <FormSection title="Account">
+            <FormGrid columns={2}>
+              <FormField label="Full name" required error={e.name?.message}><Input {...register('name')} autoFocus /></FormField>
+              <FormField label="Work email" required error={e.email?.message}><Input type="email" {...register('email')} /></FormField>
+            </FormGrid>
+          </FormSection>
         )}
-        <FormField label="Roles" required error={e.role_ids?.message} hint="Permissions are the union of all assigned roles.">
+        <FormSection title="Role" description="Usually one role that matches the job. If you pick more than one, the person gets all of their permissions combined.">
           <Controller
             control={control}
             name="role_ids"
             render={({ field }) => (
-              <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
-                {(roleList.data?.data ?? []).map((r) => (
-                  <Checkbox
-                    key={r.id}
-                    label={r.name}
-                    description={r.description ?? undefined}
-                    checked={field.value?.includes(r.id) ?? false}
-                    onChange={(ev) => field.onChange(ev.target.checked ? [...(field.value ?? []), r.id] : (field.value ?? []).filter((x) => x !== r.id))}
-                  />
-                ))}
-              </div>
+              <RolePicker roles={roleList.data?.data ?? []} value={field.value ?? []} onChange={field.onChange} invalid={Boolean(e.role_ids)} />
             )}
           />
-        </FormField>
-        <div style={{ marginTop: 16 }}>
+          {e.role_ids?.message && <p role="alert" style={{ color: 'var(--color-danger)', fontSize: 12, marginTop: 6 }}>{e.role_ids.message}</p>}
+        </FormSection>
+        <FormSection title="Branch access">
           <Controller control={control} name="all_branches" render={({ field }) => (
             <Switch checked={field.value} onCheckedChange={field.onChange} label="Access to all branches" description="Turn off to restrict this user to specific branches." />
           )} />
-        </div>
-        {!allBranches && (
-          <FormField label="Allowed branches" error={e.branch_ids?.message}>
-            <Controller
-              control={control}
-              name="branch_ids"
-              render={({ field }) => (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {branchesList.map((b) => (
-                    <Checkbox
-                      key={b.id}
-                      label={`${b.name} (${b.code})`}
-                      checked={field.value?.includes(b.id) ?? false}
-                      onChange={(ev) => field.onChange(ev.target.checked ? [...(field.value ?? []), b.id] : (field.value ?? []).filter((x) => x !== b.id))}
-                    />
-                  ))}
-                </div>
-              )}
-            />
-          </FormField>
-        )}
+          {!allBranches && (
+            <FormField label="Allowed branches" error={e.branch_ids?.message}>
+              <Controller
+                control={control}
+                name="branch_ids"
+                render={({ field }) => (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {branchesList.map((b) => (
+                      <Checkbox
+                        key={b.id}
+                        label={`${b.name} (${b.code})`}
+                        checked={field.value?.includes(b.id) ?? false}
+                        onChange={(ev) => field.onChange(ev.target.checked ? [...(field.value ?? []), b.id] : (field.value ?? []).filter((x) => x !== b.id))}
+                      />
+                    ))}
+                  </div>
+                )}
+              />
+            </FormField>
+          )}
+        </FormSection>
         {user && (
-          <div style={{ marginTop: 16 }}>
+          <FormSection title="Status">
             <Controller control={control} name="is_active" render={({ field }) => (
               <Switch checked={field.value} onCheckedChange={field.onChange} label="Active in this company" description="Inactive members cannot sign in to this company." />
             )} />
-          </div>
+          </FormSection>
         )}
       </form>
     </Drawer>

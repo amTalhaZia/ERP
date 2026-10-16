@@ -46,6 +46,7 @@
 
 .breadcrumbs {
   display: none;
+  min-width: 0;
 
   @include up(md) {
     display: block;
@@ -58,14 +59,27 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    min-width: 0;
     @include text(sm, medium);
   }
 
+  // One line always: crumbs never wrap; the current page truncates with … when space is tight.
   li {
     display: flex;
     align-items: center;
     gap: var(--space-2);
     color: var(--color-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:last-child {
+      flex-shrink: 1;
+      min-width: 0;
+
+      span {
+        @include truncate;
+      }
+    }
 
     &:not(:first-child)::before {
       content: '/';
