@@ -10,6 +10,7 @@ use App\Http\Resources\Platform\PlatformCompanyResource;
 use App\Models\Company;
 use App\Models\User;
 use App\Support\Audit\AuditLogger;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -116,7 +117,7 @@ class PlatformCompanyController extends ApiController
         ])->values()]);
     }
 
-    private function membersQuery(Company $company): \Illuminate\Database\Query\Builder
+    private function membersQuery(Company $company): Builder
     {
         return DB::table('users')
             ->join('company_user', 'company_user.user_id', '=', 'users.id')

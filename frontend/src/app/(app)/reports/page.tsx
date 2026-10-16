@@ -165,7 +165,7 @@ export default function ReportsPage() {
                   {preview.error ? (
                     <div style={{ padding: 16 }}><ErrorState error={preview.error} onRetry={() => void preview.refetch()} /></div>
                   ) : preview.isLoading || !data ? (
-                    <Skeleton style={{ height: 320, margin: 16 }} />
+                    <Skeleton style={{ height: 320, margin: 16, width: 'auto' }} />
                   ) : data.rows.length === 0 ? (
                     <EmptyState title="No rows for these filters" />
                   ) : (

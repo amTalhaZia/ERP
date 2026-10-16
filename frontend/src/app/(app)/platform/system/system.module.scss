@@ -1,0 +1,87 @@
+@use 'tokens' as *;
+
+.usage {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+
+    & + li {
+      border-top: 1px solid var(--color-divider);
+    }
+  }
+}
+
+.usageHead {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.usageName {
+  @include text(sm, semibold);
+  color: var(--color-text);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+}
+
+.usageTotal {
+  margin-left: auto;
+  @include text(sm, semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-bg-subtle);
+}
+
+.barDb,
+.dotDb {
+  background: var(--color-primary);
+}
+
+.barFiles,
+.dotFiles {
+  background: var(--color-warning);
+}
+
+.dotDb,
+.dotFiles {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.usageMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  @include text(xs);
+  color: var(--color-text-muted);
+}
+
+.top {
+  flex-basis: 100%;
+}
+
+.shared {
+  @include text(xs);
+  color: var(--color-text-muted);
+  background: var(--color-bg-subtle);
+}

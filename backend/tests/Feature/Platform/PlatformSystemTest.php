@@ -17,6 +17,28 @@ class PlatformSystemTest extends TestCase
         $this->actingAsIn($user, $company)->getJson('/api/v1/platform/system')->assertNotFound();
     }
 
+    public function test_storage_usage_is_reported_per_company_without_record_contents(): void
+    {
+        $this->getJson('/api/v1/platform/system/usage')->assertUnauthorized();
+        [$user, $company] = $this->userWith(['audit.view']);
+        $this->actingAsIn($user, $company)->getJson('/api/v1/platform/system/usage')->assertNotFound();
+
+        $admin = User::factory()->platformAdmin()->create();
+        $this->app['auth']->forgetGuards();
+        $response = $this->actingAs($admin, 'web')->getJson('/api/v1/platform/system/usage?refresh=1')->assertOk();
+
+        $response->assertJsonStructure(['data' => [
+            'companies' => [['id', 'name', 'code', 'rows', 'db_bytes', 'file_bytes', 'tables' => [['name', 'rows']]]],
+            'shared_bytes',
+            'generated_at',
+        ]]);
+
+        $row = collect($response->json('data.companies'))->firstWhere('id', $company->id);
+        $this->assertNotNull($row);
+        $this->assertGreaterThan(0, $row['rows']);
+        $this->assertLessThanOrEqual(5, count($row['tables']));
+    }
+
     public function test_system_overview_returns_safe_diagnostics_only(): void
     {
         $admin = User::factory()->platformAdmin()->create();

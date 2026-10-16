@@ -30,6 +30,7 @@ Route::middleware('permission:platform.users.manage')->group(function (): void {
 // System overview & cross-company audit trail
 Route::middleware('permission:platform.system.view')->group(function (): void {
     Route::get('system', [SystemController::class, 'index'])->name('system');
+    Route::get('system/usage', [SystemController::class, 'usage'])->name('system.usage');
     Route::get('audit-logs', [PlatformAuditLogController::class, 'index'])->name('audit-logs.index');
     Route::get('audit-logs/{auditLog}', [PlatformAuditLogController::class, 'show'])->whereNumber('auditLog')->name('audit-logs.show');
 });

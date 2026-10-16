@@ -35,28 +35,54 @@ function normalize(data: unknown): Record<string, Hit[]> {
   return {};
 }
 
+async function platformSearch(q: string): Promise<Record<string, Hit[]>> {
+  const params = { search: q, per_page: 10 };
+  const [companies, users] = await Promise.all([
+    get<{ data: { id: number; name: string; code: string; email: string | null }[] }>('/platform/companies', params),
+    get<{ data: { id: number; name: string; email: string; memberships?: { company_name: string }[] }[] }>('/platform/users', params),
+  ]);
+  const out: Record<string, Hit[]> = {};
+  if (companies.data.length)
+    out.companies = companies.data.map((c) => ({ type: 'companies', id: c.id, title: c.name, subtitle: [c.code, c.email].filter(Boolean).join(' · '), url: `/platform/companies/${c.id}` }));
+  if (users.data.length)
+    out.users = users.data.map((u) => ({
+      type: 'users',
+      id: u.id,
+      title: u.name,
+      subtitle: [u.email, ...(u.memberships ?? []).map((m) => m.company_name)].join(' · '),
+      url: `/platform/users?search=${encodeURIComponent(u.email)}`,
+    }));
+  return out;
+}
+
 function SearchInner() {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const companyId = useAppSelector((s) => s.session.current_company?.id);
+  const isPlatform = useAppSelector((s) => Boolean(s.session.user?.platform_role));
+  // Platform staff outside any company search accounts (companies + users), never tenant data.
+  const platformMode = !companyId && isPlatform;
   const initial = params.get('q') ?? '';
   const [q, setQ] = useState(initial);
 
   const query = useQuery({
-    queryKey: [companyId, 'search', initial],
-    queryFn: () => get<{ data: unknown }>('/search', { q: initial }).then((r) => normalize(r.data)),
+    queryKey: [companyId ?? 'platform', 'search', initial],
+    queryFn: () => (platformMode ? platformSearch(initial) : get<{ data: unknown }>('/search', { q: initial }).then((r) => normalize(r.data))),
     enabled: initial.trim().length >= 2,
   });
   const groups = useMemo(() => Object.entries(query.data ?? {}), [query.data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 900 }}>
-      <PageHeader title="Search" description="Employees, customers, suppliers, products, documents and transactions you have access to." />
+      <PageHeader
+        title="Search"
+        description={platformMode ? 'Companies and user accounts on this platform.' : 'Employees, customers, suppliers, products, documents and transactions you have access to.'}
+      />
       <SearchInput
         autoFocus
         size="lg"
-        placeholder="Search by name, number, SKU, email…"
+        placeholder={platformMode ? 'Search companies or users by name, code, email…' : 'Search by name, number, SKU, email…'}
         value={q}
         onValueChange={setQ}
         onDebouncedChange={(v: string) => router.replace(v ? `${pathname}?q=${encodeURIComponent(v)}` : pathname)}

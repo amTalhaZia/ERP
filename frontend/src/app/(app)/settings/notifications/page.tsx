@@ -45,7 +45,7 @@ export default function NotificationSettingsPage() {
         <CardHeader title="Delivery preferences" />
         <CardBody padding="none">
           {!q.data ? (
-            <Skeleton style={{ height: 240, margin: 16 }} />
+            <Skeleton style={{ height: 240, margin: 16, width: 'auto' }} />
           ) : (
             <div className={styles.tableScroll} style={{ margin: 0 }}>
               <table className={styles.lines}>

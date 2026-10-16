@@ -76,9 +76,17 @@
   height: 44px;
   border-bottom: 1px solid var(--color-divider);
 
-  > .text {
+  .text {
     height: 10px;
   }
+}
+
+// Equal-width column so per-bar percentages never add up past the row width.
+.cell {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 .dense .row {
@@ -89,7 +97,7 @@
   height: 40px;
   background: var(--color-bg-subtle);
 
-  > .text {
+  .text {
     height: 8px;
   }
 }

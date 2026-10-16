@@ -70,6 +70,19 @@ export interface SystemOverview {
   generated_at: string;
 }
 
+export interface CompanyUsage {
+  id: number;
+  name: string;
+  code: string;
+  is_active: boolean;
+  is_demo: boolean;
+  archived: boolean;
+  rows: number;
+  db_bytes: number;
+  file_bytes: number;
+  tables: { name: string; rows: number }[];
+}
+
 export type CompanyInput = {
   name: string;
   legal_name?: string | null;
@@ -86,5 +99,7 @@ export const platformUsers = resource<PlatformUser, { is_active?: boolean; platf
 
 export const platformApi = {
   members: (companyId: number) => get<{ data: CompanyMember[] }>(`/platform/companies/${companyId}/members`).then((r) => r.data),
+  usage: (refresh = false) =>
+    get<{ data: { companies: CompanyUsage[]; shared_bytes: number; generated_at: string } }>('/platform/system/usage', refresh ? { refresh: 1 } : undefined).then((r) => r.data),
   system: () => get<{ data: SystemOverview }>('/platform/system').then((r) => r.data),
 };

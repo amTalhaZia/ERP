@@ -49,18 +49,21 @@ export function SkeletonTable({ rows = 6, cols = 5, header = true, dense, classN
       {header && (
         <div className={cn(styles.row, styles.headerRow)}>
           {Array.from({ length: cols }, (_, c) => (
-            <span key={c} className={cn(styles.skeleton, styles.text)} style={{ width: widths[c % widths.length], maxWidth: 120 }} />
+            <span key={c} className={styles.cell}>
+              <span className={cn(styles.skeleton, styles.text)} style={{ width: widths[c % widths.length], minWidth: 40, maxWidth: 120 }} />
+            </span>
           ))}
         </div>
       )}
       {Array.from({ length: rows }, (_, r) => (
         <div key={r} className={styles.row}>
           {Array.from({ length: cols }, (_, c) => (
-            <span
-              key={c}
-              className={cn(styles.skeleton, styles.text)}
-              style={{ width: `${55 + ((r * 7 + c * 13) % 40)}%`, animationDelay: `${(r * 60) % 400}ms` }}
-            />
+            <span key={c} className={styles.cell}>
+              <span
+                className={cn(styles.skeleton, styles.text)}
+                style={{ width: `${55 + ((r * 7 + c * 13) % 40)}%`, animationDelay: `${(r * 60) % 400}ms` }}
+              />
+            </span>
           ))}
         </div>
       ))}

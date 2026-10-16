@@ -104,7 +104,7 @@ export default function PlatformCompanyPage({ params }: { params: Promise<{ id: 
           {members.error ? (
             <div style={{ padding: 16 }}><ErrorState error={members.error} onRetry={() => void members.refetch()} /></div>
           ) : members.isLoading ? (
-            <Skeleton style={{ height: 280, margin: 16 }} />
+            <Skeleton style={{ height: 280, margin: 16, width: 'auto' }} />
           ) : groups.length === 0 ? (
             <EmptyState size="sm" title={filter ? 'No matching users' : 'No users yet'} />
           ) : (
