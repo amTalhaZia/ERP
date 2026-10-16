@@ -103,18 +103,23 @@ function RoleEditor({ role, open, onClose, allRoles }: { role: Role | null; open
         </>
       }
     >
-      {locked && <Alert variant="info" icon={<Lock size={16} />} style={{ marginBottom: 16 }}>The Company Owner can always do everything. This role can’t be changed.</Alert>}
+      {locked && (
+        <Alert variant="info" icon={<Lock size={16} />} title="This role is protected" style={{ marginBottom: 16 }}>
+          The Company Owner can always do everything, so nobody — not even an owner — can remove access from it by mistake and get locked out.
+          To change what other people can do, close this and open their role (for example Company Administrator), then choose <b>Change access</b>.
+        </Alert>
+      )}
       {role?.is_system && !locked && <Alert variant="info" style={{ marginBottom: 16 }}>This is a built-in role, so its name stays the same — but you can change what it is allowed to do.</Alert>}
       {error && <Alert variant="danger" style={{ marginBottom: 16 }}>{error}</Alert>}
 
-      <div className={styles.editorTop}>
-        <FormField label="Role name" required hint={!role ? 'The job title, e.g. “Store Keeper” or “Cashier”.' : undefined}>
-          <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!!role?.is_system} maxLength={100} placeholder="e.g. Store Keeper" />
-        </FormField>
-        <FormField label="What does this person do?">
-          <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} disabled={!!role?.is_system} maxLength={300} placeholder="e.g. Receives goods and keeps the stock count correct." />
-        </FormField>
-        {!locked && (
+      {!locked && (
+        <div className={styles.editorTop}>
+          <FormField label="Role name" required hint={!role ? 'The job title, e.g. “Store Keeper” or “Cashier”.' : undefined}>
+            <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!!role?.is_system} maxLength={100} placeholder="e.g. Store Keeper" />
+          </FormField>
+          <FormField label="What does this person do?">
+            <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} disabled={!!role?.is_system} maxLength={300} placeholder="e.g. Receives goods and keeps the stock count correct." />
+          </FormField>
           <FormField label="Start from an existing role" hint="Optional — copies its access, then you can tick or untick.">
             <Select
               aria-label="Copy access from"
@@ -125,10 +130,10 @@ function RoleEditor({ role, open, onClose, allRoles }: { role: Role | null; open
               options={allRoles.filter((r) => !r.is_locked && r.id !== role?.id).map((r) => ({ value: String(r.id), label: r.name }))}
             />
           </FormField>
-        )}
-      </div>
+        </div>
+      )}
 
-      <h3 className={styles.editorHeading}>What can they do?</h3>
+      <h3 className={styles.editorHeading}>{locked ? 'Everything this role can do' : 'What can they do?'}</h3>
       <SearchInput placeholder="Search, e.g. invoices, leave, stock" value={filter} onValueChange={setFilter} aria-label="Search what this role can do" />
       <div className={styles.areas}>
         {catalogue.isLoading || (role && detail.isLoading) ? (
