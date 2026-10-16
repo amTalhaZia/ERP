@@ -81,13 +81,14 @@
   position: relative;
   min-width: 0;
 
+  // Edge fades that appear only when there is more table to scroll to on that side.
   &::before,
   &::after {
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 16px;
+    width: 40px;
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--motion-base) var(--ease);
@@ -96,12 +97,14 @@
 
   &::before {
     left: 0;
-    background: linear-gradient(90deg, rgba(15, 23, 42, 0.08), transparent);
+    background: linear-gradient(90deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-surface) 65%, transparent) 45%, transparent 100%);
+    box-shadow: inset 8px 0 10px -8px var(--table-edge-shadow);
   }
 
   &::after {
     right: 0;
-    background: linear-gradient(-90deg, rgba(15, 23, 42, 0.08), transparent);
+    background: linear-gradient(-90deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-surface) 65%, transparent) 45%, transparent 100%);
+    box-shadow: inset -8px 0 10px -8px var(--table-edge-shadow);
   }
 
   &[data-shadow-left='true']::before {

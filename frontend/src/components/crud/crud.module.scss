@@ -64,6 +64,8 @@
 .mono {
   font-family: var(--font-mono), ui-monospace, monospace;
   @include text(sm, medium);
+  // Codes and numbers (EMP-0002, INV-2026-0001) read as one unit — never split across lines.
+  white-space: nowrap;
 }
 
 .num {

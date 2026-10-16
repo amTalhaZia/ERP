@@ -38,6 +38,7 @@
   --color-bg: #{c($slate, 50)};
   --color-bg-subtle: #{c($slate, 100)};
   --color-surface: #ffffff;
+  --table-edge-shadow: rgba(15, 23, 42, 0.18);
   --color-surface-hover: #{c($slate, 50)};
   --color-surface-raised: #ffffff;
   --color-border: #{c($slate, 200)};
@@ -118,6 +119,7 @@
   --color-bg: #{c($slate, 950)};
   --color-bg-subtle: #{c($slate, 900)};
   --color-surface: #{c($slate, 900)};
+  --table-edge-shadow: rgba(0, 0, 0, 0.6);
   --color-surface-hover: #{c($slate, 800)};
   --color-surface-raised: #{c($slate, 800)};
   --color-border: #{c($slate, 800)};

@@ -93,6 +93,11 @@
   padding-inline: 0;
   aspect-ratio: 1;
 
+  // Square icon buttons never stretch (stretching the width would also grow the height via aspect-ratio).
+  &.button {
+    flex: 0 0 auto;
+  }
+
   &.sm {
     width: control-height(sm);
   }
