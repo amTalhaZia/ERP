@@ -45,6 +45,8 @@ class PlatformCompanyResource extends JsonResource
             'settings' => $this->settings ?? [],
             'branches_count' => $this->whenCounted('branches'),
             'users_count' => $this->whenCounted('memberships'),
+            'employees_count' => $this->when($this->resource->hasAttribute('employees_count'), fn () => $this->resource->getAttribute('employees_count')),
+            'owners' => $this->when($this->resource->hasAttribute('owners'), fn () => $this->resource->getAttribute('owners')),
             'created_at' => $this->created_at?->toJSON(),
             'updated_at' => $this->updated_at?->toJSON(),
             'deleted_at' => $this->deleted_at?->toJSON(),

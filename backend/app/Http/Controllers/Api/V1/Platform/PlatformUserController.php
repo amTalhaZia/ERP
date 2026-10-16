@@ -31,7 +31,7 @@ class PlatformUserController extends ApiController
 
         $query = User::query()
             ->withCount('memberships')
-            ->with(['memberships' => fn ($q) => $q->with('company:id,name')->orderByDesc('is_default')]);
+            ->with(['memberships' => fn ($q) => $q->with('company:id,name')->orderByDesc('is_default'), 'roles:id,slug,name']);
 
         $this->applySearch($query, $request, ['name', 'email']);
         $this->applyFilters($query, $request, ['is_active']);
@@ -62,7 +62,7 @@ class PlatformUserController extends ApiController
     {
         $this->authorizePlatform($request);
 
-        return new PlatformUserResource($user->load('memberships.company:id,name')->loadCount('memberships'));
+        return new PlatformUserResource($user->load(['memberships.company:id,name', 'roles:id,slug,name'])->loadCount('memberships'));
     }
 
     public function update(UpdatePlatformUserRequest $request, User $user): PlatformUserResource

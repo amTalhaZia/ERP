@@ -17,6 +17,7 @@ Route::middleware('permission:platform.companies.manage')->group(function (): vo
     Route::apiResource('companies', PlatformCompanyController::class)->whereNumber('company');
     Route::post('companies/{company}/activate', [PlatformCompanyController::class, 'activate'])->whereNumber('company')->name('companies.activate');
     Route::post('companies/{company}/deactivate', [PlatformCompanyController::class, 'deactivate'])->whereNumber('company')->name('companies.deactivate');
+    Route::get('companies/{company}/members', [PlatformCompanyController::class, 'members'])->whereNumber('company')->name('companies.members');
 });
 
 // Users

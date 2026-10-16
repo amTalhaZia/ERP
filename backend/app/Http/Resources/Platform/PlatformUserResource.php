@@ -33,6 +33,10 @@ class PlatformUserResource extends JsonResource
                 ->map(fn (CompanyUser $m) => [
                     'company_id' => $m->company_id,
                     'company_name' => $m->relationLoaded('company') ? $m->company?->name : null,
+                    'roles' => $this->relationLoaded('roles')
+                        ? $this->roles->filter(fn ($r) => (int) $r->pivot->company_id === (int) $m->company_id)
+                            ->map(fn ($r) => ['slug' => $r->slug, 'name' => $r->name])->values()
+                        : [],
                     'is_active' => $m->is_active,
                     'is_default' => $m->is_default,
                     'joined_at' => $m->joined_at?->toJSON(),

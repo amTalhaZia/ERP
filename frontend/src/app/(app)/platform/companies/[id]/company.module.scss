@@ -1,0 +1,179 @@
+@use 'tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 1200px;
+}
+
+.stats {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+
+  @include up(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include up(xl) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.titleIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  svg {
+    color: var(--color-primary);
+  }
+}
+
+.owners {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-primary-soft-border);
+    background: var(--color-primary-soft);
+    border-radius: var(--radius-lg);
+    min-width: 260px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  strong {
+    @include text(base, semibold);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    @include text(sm);
+  }
+}
+
+.group + .group {
+  border-top: 1px solid var(--color-border);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-subtle);
+
+  > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  strong {
+    @include text(sm, semibold);
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+  }
+}
+
+.rank {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  color: var(--color-on-primary) !important;
+  @include text(xs, bold);
+}
+
+.members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'av who seen' 'av tags tags';
+    align-items: center;
+    gap: 2px var(--space-3);
+    padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) + 38px);
+
+    @include up(md) {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-areas: 'av who tags seen';
+    }
+
+    & + li {
+      border-top: 1px solid var(--color-divider);
+    }
+
+    > :first-child {
+      grid-area: av;
+    }
+  }
+}
+
+.inactive {
+  opacity: 0.6;
+}
+
+.who {
+  grid-area: who;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  strong {
+    @include text(sm, semibold);
+    @include truncate;
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+    @include truncate;
+  }
+}
+
+.tags {
+  grid-area: tags;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.seen {
+  grid-area: seen;
+  @include text(xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.footnote {
+  @include text(xs);
+  color: var(--color-text-muted);
+}

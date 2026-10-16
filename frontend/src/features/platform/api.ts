@@ -1,6 +1,25 @@
 import { get } from '@/lib/api/client';
 import { resource } from '@/lib/crud/resource';
 
+export interface RoleRef {
+  slug: string;
+  name: string;
+}
+
+/** A company login account as seen by platform staff — account data only, never HR/financial records. */
+export interface CompanyMember {
+  id: number;
+  name: string;
+  email: string;
+  avatar_url: string | null;
+  roles: RoleRef[];
+  is_active: boolean;
+  branch_restricted: boolean;
+  two_factor_enabled: boolean;
+  last_login_at: string | null;
+  joined_at: string | null;
+}
+
 export interface PlatformCompany {
   id: number;
   name: string;
@@ -18,6 +37,8 @@ export interface PlatformCompany {
   is_demo: boolean;
   branches_count?: number;
   users_count?: number;
+  employees_count?: number | null;
+  owners?: { id: number; name: string; email: string }[];
   created_at: string;
   deleted_at: string | null;
 }
@@ -35,7 +56,7 @@ export interface PlatformUser {
   last_login_at: string | null;
   deactivated_at: string | null;
   memberships_count?: number;
-  memberships?: { company_id: number; company_name: string; is_active: boolean; is_default: boolean; joined_at: string | null }[];
+  memberships?: { company_id: number; company_name: string; roles?: RoleRef[]; is_active: boolean; is_default: boolean; joined_at: string | null }[];
 }
 
 export interface SystemOverview {
@@ -64,5 +85,6 @@ export const platformCompanies = resource<PlatformCompany, CompanyInput>('platfo
 export const platformUsers = resource<PlatformUser, { is_active?: boolean; platform_role?: string | null }>('platform/users', 'User');
 
 export const platformApi = {
+  members: (companyId: number) => get<{ data: CompanyMember[] }>(`/platform/companies/${companyId}/members`).then((r) => r.data),
   system: () => get<{ data: SystemOverview }>('/platform/system').then((r) => r.data),
 };

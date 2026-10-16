@@ -13,7 +13,11 @@ use App\Support\Audit\AuditLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Cross-company administration. Runs without a tenant context: the
@@ -55,7 +59,68 @@ class PlatformCompanyController extends ApiController
     {
         $this->authorizePlatform($request);
 
-        return new PlatformCompanyResource($company->loadCount(['branches', 'memberships']));
+        $company->loadCount(['branches', 'memberships']);
+
+        // Headcount only (no HR details) — platform staff never see business data.
+        $company->setAttribute('employees_count', Schema::hasTable('employees')
+            ? DB::table('employees')->where('company_id', $company->id)->whereNull('deleted_at')->count()
+            : null);
+
+        $company->setAttribute('owners', $this->membersQuery($company)
+            ->whereExists(fn ($q) => $q->selectRaw('1')->from('role_user')
+                ->join('roles', 'roles.id', '=', 'role_user.role_id')
+                ->whereColumn('role_user.user_id', 'users.id')
+                ->where('role_user.company_id', $company->id)
+                ->where('roles.slug', 'company.owner'))
+            ->get(['users.id', 'users.name', 'users.email'])
+            ->map(fn ($u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email])
+            ->all());
+
+        return new PlatformCompanyResource($company);
+    }
+
+    /**
+     * Login accounts of a company with their roles — account-level data only
+     * (name, email, roles, status). No HR, payroll or financial records.
+     */
+    public function members(Request $request, Company $company): JsonResponse
+    {
+        $this->authorizePlatform($request);
+
+        $members = $this->membersQuery($company)
+            ->orderBy('users.name')
+            ->get([
+                'users.id', 'users.name', 'users.email', 'users.avatar_path', 'users.is_active as user_is_active',
+                'users.last_login_at', 'users.two_factor_confirmed_at',
+                'company_user.is_active as membership_active', 'company_user.branch_ids', 'company_user.joined_at',
+            ]);
+
+        $roles = DB::table('role_user')
+            ->join('roles', 'roles.id', '=', 'role_user.role_id')
+            ->where('role_user.company_id', $company->id)
+            ->whereIn('role_user.user_id', $members->pluck('id'))
+            ->get(['role_user.user_id', 'roles.slug', 'roles.name'])
+            ->groupBy('user_id');
+
+        return response()->json(['data' => $members->map(fn ($m) => [
+            'id' => $m->id,
+            'name' => $m->name,
+            'email' => $m->email,
+            'avatar_url' => $m->avatar_path ? Storage::disk('public')->url($m->avatar_path) : null,
+            'roles' => ($roles->get($m->id) ?? collect())->map(fn ($r) => ['slug' => $r->slug, 'name' => $r->name])->values(),
+            'is_active' => (bool) $m->membership_active && (bool) $m->user_is_active,
+            'branch_restricted' => $m->branch_ids !== null,
+            'two_factor_enabled' => $m->two_factor_confirmed_at !== null,
+            'last_login_at' => $m->last_login_at ? Carbon::parse($m->last_login_at)->toJSON() : null,
+            'joined_at' => $m->joined_at ? Carbon::parse($m->joined_at)->toJSON() : null,
+        ])->values()]);
+    }
+
+    private function membersQuery(Company $company): \Illuminate\Database\Query\Builder
+    {
+        return DB::table('users')
+            ->join('company_user', 'company_user.user_id', '=', 'users.id')
+            ->where('company_user.company_id', $company->id);
     }
 
     public function update(UpdatePlatformCompanyRequest $request, Company $company): PlatformCompanyResource

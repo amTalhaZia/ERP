@@ -4,7 +4,8 @@ import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Building2, Plus, Power, PowerOff, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Building2, Plus, Power, PowerOff, Trash2, Users } from 'lucide-react';
 import {
   Alert, Badge, Button, ConfirmDialog, Drawer, FormField, FormGrid, FormSection, Input, MenuItem, MenuSeparator, Select, StatusBadge, Switch,
   type DataTableColumn,
@@ -99,6 +100,7 @@ function CompanyCreate({ open, onClose }: { open: boolean; onClose: () => void }
 }
 
 function CompaniesInner() {
+  const router = useRouter();
   const list = useListState({ sort: 'name' });
   const query = platformCompanies.useList(list.apiParams);
   const activate = platformCompanies.useAction('activate', { success: 'Company activated' });
@@ -146,8 +148,11 @@ function CompaniesInner() {
         }
         emptyTitle="No companies yet"
         emptyAction={<Button leftIcon={<Building2 size={16} />} onClick={() => setCreating(true)}>Provision the first company</Button>}
+        onRowClick={(c) => router.push(`/platform/companies/${c.id}`)}
         rowActions={(c) => (
           <>
+            <MenuItem icon={<Users size={16} />} onSelect={() => router.push(`/platform/companies/${c.id}`)}>View users &amp; roles</MenuItem>
+            <MenuSeparator />
             {c.is_active ? (
               <MenuItem icon={<PowerOff size={16} />} onSelect={() => setConfirm({ c, action: 'deactivate' })}>Deactivate</MenuItem>
             ) : (

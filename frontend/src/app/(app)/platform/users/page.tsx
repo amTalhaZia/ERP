@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
+import Link from 'next/link';
 import { ShieldCheck, ShieldOff, UserCheck, UserX } from 'lucide-react';
 import { Avatar, Badge, ConfirmDialog, MenuItem, MenuSeparator, Select, StatusBadge, type DataTableColumn } from '@/components/ui';
 import { ListPage } from '@/components/crud/ListPage';
@@ -9,6 +10,7 @@ import { formatRelative } from '@/lib/format';
 import { useAppSelector } from '@/store';
 import { selectUser } from '@/store/sessionSlice';
 import { platformCompanies, platformUsers, type PlatformUser } from '@/features/platform/api';
+import { ROLE_META, primaryRoleSlug } from '@/features/platform/roleOrder';
 import styles from '@/components/crud/crud.module.scss';
 
 function PlatformUsersInner() {
@@ -36,18 +38,24 @@ function PlatformUsersInner() {
     { id: 'role', header: 'Platform role', cell: ({ row }) => (row.original.platform_role ? <Badge variant="primary" size="sm">{row.original.platform_role === 'platform.owner' ? 'Owner' : 'Admin'}</Badge> : <span className={styles.muted}>—</span>) },
     {
       id: 'companies',
-      header: 'Companies',
+      header: 'Company · role',
       cell: ({ row }) => {
         const ms = row.original.memberships ?? [];
         if (ms.length === 0) return <span className={styles.muted}>No company</span>;
         return (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            {ms.map((m) => (
-              <Badge key={m.company_id} size="sm" variant={m.is_active ? 'primary' : 'neutral'} title={m.is_active ? undefined : 'Inactive in this company'}>
-                {m.company_name ?? `#${m.company_id}`}
-                {!m.is_active && ' (inactive)'}
-              </Badge>
-            ))}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+            {ms.map((m) => {
+              const slug = primaryRoleSlug((m.roles ?? []).map((r) => r.slug));
+              const role = slug ? (ROLE_META[slug]?.label ?? m.roles?.find((r) => r.slug === slug)?.name) : 'No role';
+              return (
+                <Link key={m.company_id} href={`/platform/companies/${m.company_id}`} onClick={(ev) => ev.stopPropagation()} title="Open company">
+                  <Badge size="sm" variant={m.is_active ? 'primary' : 'neutral'}>
+                    {m.company_name ?? `#${m.company_id}`} · {role}
+                    {!m.is_active && ' (inactive)'}
+                  </Badge>
+                </Link>
+              );
+            })}
           </div>
         );
       },

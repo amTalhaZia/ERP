@@ -172,4 +172,31 @@ class PlatformCompanyTest extends TestCase
 
         $this->actingAs($admin, 'web')->getJson('/api/v1/platform/companies/999999')->assertNotFound();
     }
+
+    public function test_company_detail_shows_owner_and_members_with_roles_only(): void
+    {
+        Notification::fake();
+        $admin = User::factory()->platformAdmin()->create();
+
+        $id = $this->actingAs($admin, 'web')->postJson('/api/v1/platform/companies', [
+            'name' => 'Initech',
+            'owner' => ['name' => 'Bill Lumbergh', 'email' => 'bill@initech.example'],
+        ])->assertCreated()->json('data.id');
+
+        $this->actingAs($admin, 'web')->getJson("/api/v1/platform/companies/{$id}")
+            ->assertOk()
+            ->assertJsonPath('data.owners.0.email', 'bill@initech.example')
+            ->assertJsonPath('data.employees_count', 0);
+
+        $this->actingAs($admin, 'web')->getJson("/api/v1/platform/companies/{$id}/members")
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.email', 'bill@initech.example')
+            ->assertJsonPath('data.0.roles.0.slug', 'company.owner')
+            ->assertJsonMissingPath('data.0.password')
+            ->assertJsonMissingPath('data.0.salary');
+
+        [$user, $company] = $this->userWith(['users.view']);
+        $this->actingAsIn($user, $company)->getJson("/api/v1/platform/companies/{$id}/members")->assertNotFound();
+    }
 }
