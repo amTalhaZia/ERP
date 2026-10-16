@@ -21,6 +21,7 @@ import type { Permission } from '@/lib/auth/permissions';
 import { isPlatformOnly } from '@/lib/auth/home';
 import { formatCompact, formatDate, formatMoney, formatNumber, formatRelative, humanize } from '@/lib/format';
 import { UpcomingHolidays } from '@/features/hr/UpcomingHolidays';
+import { auditActionPhrase } from '@/lib/auditLabels';
 import styles from './dashboard.module.scss';
 
 type RangeKey = '30d' | 'mtd' | '90d' | 'ytd' | '12m';
@@ -442,7 +443,7 @@ export default function DashboardPage() {
                         <span className={styles.dot} aria-hidden />
                         <span className={styles.listMain}>
                           <span className={styles.listTitle}>
-                            <strong>{a.actor_name ?? 'System'}</strong> {humanize(a.action.split('.').slice(-1)[0] ?? a.action).toLowerCase()} {a.entity_label ?? humanize(a.action.split('.')[0] ?? '')}
+                            <strong>{a.actor_name ?? 'System'}</strong> <span title={a.action}>{auditActionPhrase(a.action)}</span>{a.entity_label ? <> — {a.entity_label}</> : null}
                           </span>
                           <span className={styles.listSub}>{formatRelative(a.created_at)}</span>
                         </span>
