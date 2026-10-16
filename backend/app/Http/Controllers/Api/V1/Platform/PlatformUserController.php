@@ -29,10 +29,20 @@ class PlatformUserController extends ApiController
     {
         $this->authorizePlatform($request);
 
-        $query = User::query()->withCount('memberships');
+        $query = User::query()
+            ->withCount('memberships')
+            ->with(['memberships' => fn ($q) => $q->with('company:id,name')->orderByDesc('is_default')]);
 
         $this->applySearch($query, $request, ['name', 'email']);
         $this->applyFilters($query, $request, ['is_active']);
+
+        // filter[company_id]=<id> → members of that company; =none → users without any company.
+        $companyFilter = $request->input('filter.company_id');
+        if ($companyFilter === 'none') {
+            $query->doesntHave('memberships');
+        } elseif (is_numeric($companyFilter)) {
+            $query->whereHas('memberships', fn ($q) => $q->where('company_id', (int) $companyFilter));
+        }
 
         $platformRole = $request->input('filter.platform_role');
         if ($platformRole === 'none') {

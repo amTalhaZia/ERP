@@ -45,6 +45,28 @@ class PlatformUserTest extends TestCase
             ->assertJsonPath('data.memberships.0.company_name', $company->name);
     }
 
+    public function test_list_shows_company_names_and_filters_by_company(): void
+    {
+        $admin = User::factory()->platformAdmin()->create();
+        $northwind = Company::factory()->create(['name' => 'Northwind']);
+        $indus = Company::factory()->create(['name' => 'Indus']);
+        $nwUser = User::factory()->inCompany($northwind)->create();
+        $indusUser = User::factory()->inCompany($indus)->create();
+        $loner = User::factory()->create();
+
+        $all = $this->actingAs($admin, 'web')->getJson('/api/v1/platform/users')->assertOk();
+        $row = collect($all->json('data'))->firstWhere('id', $nwUser->id);
+        $this->assertSame('Northwind', $row['memberships'][0]['company_name']);
+
+        $this->actingAs($admin, 'web')->getJson("/api/v1/platform/users?filter[company_id]={$indus->id}")
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $indusUser->id);
+
+        $none = $this->actingAs($admin, 'web')->getJson('/api/v1/platform/users?filter[company_id]=none')->assertOk();
+        $this->assertEqualsCanonicalizing([$admin->id, $loner->id], collect($none->json('data'))->pluck('id')->all());
+    }
+
     public function test_update_requires_a_field(): void
     {
         $admin = User::factory()->platformAdmin()->create();
