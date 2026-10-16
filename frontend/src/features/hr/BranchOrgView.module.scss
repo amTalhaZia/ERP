@@ -1,0 +1,180 @@
+@use 'tokens' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+
+  > :first-child {
+    flex: 1 1 260px;
+    max-width: 420px;
+  }
+}
+
+.meta {
+  @include text(sm);
+  color: var(--color-text-muted);
+}
+
+.branch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl, var(--radius-lg));
+  background: var(--color-bg-subtle);
+}
+
+.branchHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  h2 {
+    margin: 0;
+    @include text(md, semibold);
+    color: var(--color-text);
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  div > span {
+    @include text(sm);
+    color: var(--color-text-muted);
+  }
+}
+
+.branchIcon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  display: grid;
+  place-items: center;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+// Departments flow into as many columns as fit: 1 on phones, up to 4 on wide screens.
+.depts {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  align-items: start;
+}
+
+.dept {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.deptHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+  border-top: 3px solid var(--color-primary);
+
+  strong {
+    @include text(sm, semibold);
+  }
+
+  span {
+    min-width: 24px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    text-align: center;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    @include text(xs, semibold);
+  }
+}
+
+.people {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-1) 0;
+
+  li {
+    position: relative;
+    padding-right: var(--space-3);
+  }
+
+  li[data-lead='true'] .who strong::after {
+    content: 'Lead';
+    margin-left: var(--space-2);
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+    @include text(xs, medium);
+  }
+}
+
+// Small "└" connector showing who reports to whom.
+.elbow {
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 50%;
+  margin-left: -16px;
+  border-left: 1px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
+  border-bottom-left-radius: 6px;
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-2);
+  border-radius: var(--radius-md);
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--color-bg-subtle);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}
+
+.who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  strong {
+    display: flex;
+    align-items: center;
+    @include text(sm, semibold);
+    color: var(--color-text);
+    @include truncate;
+  }
+
+  span {
+    @include text(xs);
+    color: var(--color-text-muted);
+    @include truncate;
+  }
+}

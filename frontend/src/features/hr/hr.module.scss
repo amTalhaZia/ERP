@@ -462,10 +462,16 @@ mark.hl {
 .horizontal {
   @include up(lg) {
     text-align: center;
+    // Separate top-level people (no manager) sit side by side, not stacked under each other.
+    display: flex;
+    // safe: when wider than the viewport, start at the left edge instead of clipping it.
+    justify-content: safe center;
+    align-items: flex-start;
+    gap: var(--space-8, 32px);
 
     ul {
       display: flex;
-      justify-content: center;
+      justify-content: safe center;
       position: relative;
       padding: var(--space-5, 20px) 0 0;
       margin: 0;
