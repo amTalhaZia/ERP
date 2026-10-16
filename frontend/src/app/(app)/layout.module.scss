@@ -25,6 +25,9 @@
 .content {
   flex: 1;
   width: 100%;
+  min-width: 0;
+  // Nothing inside a page may push the layout wider than the screen (wide content scrolls in its own box).
+  overflow-x: clip;
   max-width: var(--content-max);
   margin: 0 auto;
   padding: var(--space-4) var(--gutter) var(--space-12);

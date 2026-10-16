@@ -114,6 +114,9 @@
 }
 
 .scroller {
+  // Positioned so absolutely-placed children (e.g. visually-hidden labels) stay inside the
+  // scroll box instead of widening the whole page on phones.
+  position: relative;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
