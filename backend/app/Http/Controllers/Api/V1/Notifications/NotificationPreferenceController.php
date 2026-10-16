@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Notifications;
 
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Models\User;
+use App\Notifications\HR\HolidayAnnounced;
 use App\Notifications\UserInvitedNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class NotificationPreferenceController extends ApiController
     /** Types shipped with the core; modules may register more via GenericNotification. */
     private const KNOWN_TYPES = [
         UserInvitedNotification::TYPE,
+        HolidayAnnounced::TYPE,
     ];
 
     public function show(Request $request): JsonResponse

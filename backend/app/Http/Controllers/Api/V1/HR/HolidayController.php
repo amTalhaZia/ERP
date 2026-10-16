@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\HR;
 
+use App\Actions\HR\AnnounceHolidayAction;
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\HR\StoreHolidayRequest;
 use App\Http\Resources\HR\HolidayResource;
@@ -26,13 +27,18 @@ class HolidayController extends ApiController
         return $this->paginated($query->paginate($this->perPage($request)), HolidayResource::class);
     }
 
-    public function store(StoreHolidayRequest $request): JsonResponse
+    public function store(StoreHolidayRequest $request, AnnounceHolidayAction $announce): JsonResponse
     {
         Gate::authorize('create', Holiday::class);
 
-        $holiday = Holiday::query()->create($request->validated());
+        $holiday = Holiday::query()->create($request->safe()->except('notify'));
 
-        return (new HolidayResource($holiday->load('branch:id,name')))->response()->setStatusCode(201);
+        // Upcoming holidays are announced to the members who work there, unless the HR user opts out.
+        $notified = $request->boolean('notify', true) ? $announce->handle($holiday) : 0;
+
+        return (new HolidayResource($holiday->load('branch:id,name')))
+            ->additional(['meta' => ['notified' => $notified]])
+            ->response()->setStatusCode(201);
     }
 
     public function show(Holiday $holiday): HolidayResource
@@ -46,7 +52,7 @@ class HolidayController extends ApiController
     {
         Gate::authorize('update', $holiday);
 
-        $holiday->fill($request->validated())->save();
+        $holiday->fill($request->safe()->except('notify'))->save();
 
         return new HolidayResource($holiday->refresh()->load('branch:id,name'));
     }

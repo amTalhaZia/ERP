@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Alert, Button, Checkbox, DateInput, Drawer, FormField, FormGrid, Input, Select, Switch } from '@/components/ui';
+import { Alert, Button, Checkbox, DateInput, Drawer, FormField, FormGrid, Input, Select, Switch, useToast } from '@/components/ui';
 import { applyServerErrors } from '@/lib/crud/resource';
 import type { ApiError } from '@/lib/api/errors';
 import { useAppSelector } from '@/store';
@@ -234,6 +234,7 @@ const holidaySchema = z.object({
   date: z.string().min(1, 'Date is required'),
   is_recurring: z.boolean(),
   branch_id: z.string(),
+  notify: z.boolean(),
 });
 
 export function HolidayForm({ open, row, onClose }: { open: boolean; row: Holiday | null; onClose: () => void }) {
@@ -241,10 +242,11 @@ export function HolidayForm({ open, row, onClose }: { open: boolean; row: Holida
   const { formError, setFormError, handle } = useServerError();
   const { register, handleSubmit, setError, control, formState } = useForm<z.infer<typeof holidaySchema>>({
     resolver: zodResolver(holidaySchema),
-    defaultValues: { name: row?.name ?? '', date: row?.date ?? '', is_recurring: row?.is_recurring ?? false, branch_id: row?.branch_id ? String(row.branch_id) : '' },
+    defaultValues: { name: row?.name ?? '', date: row?.date ?? '', is_recurring: row?.is_recurring ?? false, branch_id: row?.branch_id ? String(row.branch_id) : '', notify: true },
   });
   const create = holidays.useCreate({ onSuccess: onClose });
   const update = holidays.useUpdate({ onSuccess: onClose });
+  const toast = useToast();
   const e = formState.errors;
 
   return (
@@ -252,10 +254,16 @@ export function HolidayForm({ open, row, onClose }: { open: boolean; row: Holida
       footer={<Footer formId="holiday-form" onClose={onClose} submitting={formState.isSubmitting} editing={!!row} noun="holiday" />}>
       <form id="holiday-form" noValidate onSubmit={handleSubmit(async (v) => {
         setFormError(null);
-        const body = { ...v, branch_id: v.branch_id ? Number(v.branch_id) : null };
+        const { notify, ...rest } = v;
+        const body = { ...rest, branch_id: rest.branch_id ? Number(rest.branch_id) : null };
         try {
           if (row) await update.mutateAsync({ id: row.id, body });
-          else await create.mutateAsync(body);
+          else {
+            await create.mutateAsync({ ...body, notify });
+            if (notify && rest.date >= new Date().toISOString().slice(0, 10)) {
+              toast.info('Employees notified', body.branch_id ? 'Everyone in that branch sees it in their notifications.' : 'Everyone in the company sees it in their notifications.');
+            }
+          }
         } catch (err) {
           handle(err, setError, Object.keys(holidaySchema.shape));
         }
@@ -270,6 +278,11 @@ export function HolidayForm({ open, row, onClose }: { open: boolean; row: Holida
             <Select {...register('branch_id')} placeholder="All branches" options={branches.map((b) => ({ value: String(b.id), label: b.name }))} />
           </FormField>
           <Controller control={control} name="is_recurring" render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} label="Recurs every year" description="Same day and month each year." />} />
+          {!row && (
+            <Controller control={control} name="notify" render={({ field }) => (
+              <Switch checked={field.value} onCheckedChange={field.onChange} label="Notify employees" description="Sends an in-app notification (the bell) to everyone in the company — or only that branch. Past dates are not announced." />
+            )} />
+          )}
         </FormGrid>
       </form>
     </Drawer>

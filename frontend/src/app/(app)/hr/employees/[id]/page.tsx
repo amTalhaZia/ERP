@@ -13,6 +13,7 @@ import { useCan } from '@/lib/auth/useCan';
 import type { ApiError } from '@/lib/api/errors';
 import { formatDate, formatMoney, humanize } from '@/lib/format';
 import { PHOTO_MAX_BYTES, employees, hrApi, typeLabel, useInvalidate, useMyEmployee, type Employee } from '@/features/hr/api';
+import { ManagerDialog } from '@/features/hr/profile/ManagerDialog';
 import { ContractsTab } from '@/features/hr/profile/ContractsTab';
 import { DocumentsTab } from '@/features/hr/profile/DocumentsTab';
 import { AttendanceTab, LeaveTab, PerformanceTab, ShiftsTab } from '@/features/hr/profile/ActivityTabs';
@@ -59,7 +60,8 @@ function TerminateDialog({ open, employee, onClose }: { open: boolean; employee:
   );
 }
 
-function Overview({ e }: { e: Employee }) {
+function Overview({ e, canUpdate }: { e: Employee; canUpdate: boolean }) {
+  const [changingManager, setChangingManager] = useState(false);
   const addr = [e.address.line1, e.address.line2, [e.address.city, e.address.state, e.address.postal_code].filter(Boolean).join(' '), e.address.country].filter(Boolean).join(', ');
   return (
     <div className={crud.detailGrid}>
@@ -72,7 +74,15 @@ function Overview({ e }: { e: Employee }) {
               <dt>Designation</dt><dd>{e.designation?.title ?? '—'}</dd>
               <dt>Department</dt><dd>{e.department?.name ?? '—'}</dd>
               <dt>Branch</dt><dd>{e.branch?.name ?? '—'}</dd>
-              <dt>Reports to</dt><dd>{e.manager ? <Link href={`/hr/employees/${e.manager.id}`}>{e.manager.name}</Link> : '—'}</dd>
+              <dt>Reports to</dt>
+              <dd className={styles.managerCell}>
+                {e.manager ? <Link href={`/hr/employees/${e.manager.id}`}>{e.manager.name}</Link> : <span>Nobody</span>}
+                {canUpdate && !e.terminated_at && (
+                  <Button size="sm" variant="ghost" leftIcon={<Pencil size={12} />} onClick={() => setChangingManager(true)}>
+                    Change
+                  </Button>
+                )}
+              </dd>
               <dt>Direct reports</dt><dd>{e.reports_count ?? 0}</dd>
               <dt>Employment type</dt><dd>{typeLabel(e.employment_type)}</dd>
               <dt>Hired</dt><dd>{formatDate(e.hired_at)}</dd>
@@ -121,6 +131,7 @@ function Overview({ e }: { e: Employee }) {
           </Card>
         )}
       </div>
+      {canUpdate && <ManagerDialog key={changingManager ? 'open' : 'closed'} open={changingManager} employee={e} onClose={() => setChangingManager(false)} />}
     </div>
   );
 }
@@ -235,7 +246,7 @@ function ProfileInner({ id }: { id: string }) {
           {visible.shifts && <Tab value="shifts">Shifts</Tab>}
           {visible.performance && <Tab value="performance">Performance</Tab>}
         </TabList>
-        <TabPanel value="overview"><div className={styles.tabBody}><Overview e={e} /></div></TabPanel>
+        <TabPanel value="overview"><div className={styles.tabBody}><Overview e={e} canUpdate={canUpdate} /></div></TabPanel>
         {visible.contracts && <TabPanel value="contracts"><div className={styles.tabBody}><ContractsTab employee={e} canManage={canUpdate} /></div></TabPanel>}
         {visible.documents && <TabPanel value="documents"><div className={styles.tabBody}><DocumentsTab employee={e} canManage={canUpdate} /></div></TabPanel>}
         {visible.attendance && <TabPanel value="attendance"><div className={styles.tabBody}><AttendanceTab employee={e} /></div></TabPanel>}

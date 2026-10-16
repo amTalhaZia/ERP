@@ -24,6 +24,7 @@ class StoreHolidayRequest extends FormRequest
             'date' => [$required, 'date'],
             'is_recurring' => ['sometimes', 'boolean'],
             'branch_id' => ['nullable', 'integer', new AccessibleBranch],
+            'notify' => ['sometimes', 'boolean'],
         ];
     }
 }
