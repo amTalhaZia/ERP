@@ -1,0 +1,77 @@
+# Render Blueprint for the hosted demo API (free plan).
+# Render → New → Blueprint → pick this repo. Fill the "sync: false" values in the dashboard.
+# The free plan sleeps after ~15 idle minutes; the first request then takes ~30–60 s.
+services:
+  - type: web
+    name: erp-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Enterprise ERP
+      # "demo", not "production": the demo seeder refuses to run in production.
+      - key: APP_ENV
+        value: demo
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false
+      # The Vercel site URL, e.g. https://erp-demo.vercel.app (API is proxied through it).
+      - key: APP_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: SANCTUM_STATEFUL_DOMAINS
+        sync: false
+      - key: SESSION_DOMAIN
+        value: ""
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: TRUSTED_PROXIES
+        value: "*"
+      - key: LOG_CHANNEL
+        value: stderr
+      # Aiven MySQL
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        value: defaultdb
+      - key: DB_USERNAME
+        value: avnadmin
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_CA_PEM
+        sync: false
+      # Demo data (first boot on an empty database only)
+      - key: DEMO_BOOTSTRAP
+        value: "true"
+      - key: DEMO_COMPANIES
+        value: "1"
+      - key: DEMO_PASSWORD
+        sync: false
+      # Mail (Gmail SMTP with an app password)
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false

@@ -66,6 +66,9 @@ class DemoSeeder extends Seeder
         ]);
         $platform->forceFill(['email_verified_at' => now()])->saveQuietly();
 
+        // DEMO_COMPANIES=1 seeds only the first company (smaller hosted demo databases).
+        $companies = array_slice($companies, 0, max(1, (int) (env('DEMO_COMPANIES') ?: count($companies))));
+
         foreach ($companies as $def) {
             if (Company::query()->where('name', $def['name'])->exists()) {
                 $this->command?->warn("{$def['name']} already exists — skipped.");

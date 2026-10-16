@@ -23,10 +23,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Model::preventLazyLoading(! $this->app->isProduction());
-        Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
+        // A hosted demo (APP_ENV=demo) behaves like production here; only the demo seeder treats it differently.
+        $hosted = $this->app->environment('production', 'demo');
 
-        if ($this->app->isProduction()) {
+        Model::preventLazyLoading(! $hosted);
+        Model::preventSilentlyDiscardingAttributes(! $hosted);
+
+        if ($hosted) {
             URL::forceScheme('https');
         }
 

@@ -31,6 +31,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // with the session cookie; CSRF is enforced via the XSRF-TOKEN cookie.
         $middleware->statefulApi();
 
+        // Behind a hosting proxy (Render, Vercel rewrites, a load balancer) set TRUSTED_PROXIES=*
+        // (or the proxy IPs) so client IPs, rate limits and https detection are correct.
+        // Unset locally, so X-Forwarded-* headers from a direct client are never trusted.
+        if ($proxies = env('TRUSTED_PROXIES')) {
+            $middleware->trustProxies(at: $proxies === '*' ? '*' : array_map('trim', explode(',', $proxies)));
+        }
+
         $middleware->alias([
             'tenant' => ResolveCompanyContext::class,
             'permission' => EnsurePermission::class,

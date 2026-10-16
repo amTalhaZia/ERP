@@ -15,8 +15,17 @@ function VerifyEmailInner() {
 
   useEffect(() => {
     if (!url) return;
-    // Only follow signed links that point at our own API.
-    if (!url.startsWith(API_BASE)) {
+    // Only follow signed links that point at our own API (same origin as API_BASE, or this
+    // site when the API is proxied through it), never an arbitrary URL from the query string.
+    let ours = false;
+    try {
+      const target = new URL(url, window.location.origin);
+      const api = new URL(API_BASE || window.location.origin, window.location.origin);
+      ours = target.origin === api.origin && target.pathname.startsWith('/api/');
+    } catch {
+      ours = false;
+    }
+    if (!ours) {
       queueMicrotask(() => setState('error'));
       return;
     }
