@@ -1,0 +1,22 @@
+/* Additions for the "Teen Admin Levels" guide. */
+.mall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 4mm 0 6mm; break-inside: avoid; }
+.mall .m { border-radius: 2.5mm; padding: 3.5mm; border: 1.5px solid #c7d2fe; background: #fff; }
+.mall .m .ic { font-size: 18pt; line-height: 1; margin-bottom: 1.5mm; }
+.mall .m h4 { margin: 0 0 .5mm; font-size: 10.5pt; color: var(--ink); }
+.mall .m .eq { font-size: 8.4pt; font-weight: 700; color: var(--accent); margin-bottom: 1.5mm; }
+.mall .m p { margin: 0; font-size: 8.6pt; color: #475569; line-height: 1.45; }
+.mall .m.l1 { background: #1e1b4b; border-color: #1e1b4b; } .mall .m.l1 h4 { color: #fff; } .mall .m.l1 p { color: #c7d2fe; } .mall .m.l1 .eq { color: #a5b4fc; }
+.mall .m.l2 { background: var(--accent); border-color: var(--accent); } .mall .m.l2 h4 { color: #fff; } .mall .m.l2 p { color: #e0e7ff; } .mall .m.l2 .eq { color: #fff; }
+.mall .m.l3 { background: var(--accent-soft); }
+.lvl-pill { display: inline-block; font-size: 7.5pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: .4mm 2.2mm; border-radius: 99px; color: #fff; background: var(--accent); vertical-align: 1px; }
+.lvl-pill.p1 { background: #1e1b4b; } .lvl-pill.p3 { background: #818cf8; } .lvl-pill.ps { background: #94a3b8; }
+.yes { color: #059669; font-weight: 800; }
+.no { color: #dc2626; font-weight: 800; }
+.mid { color: #d97706; font-weight: 700; }
+table.matrix.lv td { font-size: 7.6pt; }
+table.matrix.lv td small { display: block; color: var(--muted); font-size: 6.6pt; line-height: 1.25; font-weight: 400; }
+.tree .node.plat { background: #0f172a; border-color: #0f172a; } .tree .node.plat b { color: #fff; } .tree .node.plat span { color: #cbd5e1; }
+.tree .sep { width: 100%; border-top: 1.5px dashed #c7d2fe; margin: 2mm 0 1mm; text-align: center; font-size: 7pt; color: var(--muted); }
+.ans { font-size: 9.6pt; }
+.q-group { font-size: 11pt; color: var(--accent-dark); margin: 6mm 0 3mm; font-weight: 700; break-after: avoid; }
+.legend { font-size: 8.4pt; color: var(--muted); margin: -2mm 0 4mm; }
