@@ -23,6 +23,11 @@ RUN mkdir -p storage/app/public storage/framework/cache storage/framework/sessio
     && php artisan package:discover --ansi \
     && chmod +x docker/start.sh
 
+# Run as an unprivileged user (uid 1000 — also what Hugging Face Spaces expects).
+RUN useradd -m -u 1000 app 2>/dev/null || true \
+    && chown -R 1000:1000 /app
+USER 1000
+
 ENV PHP_CLI_SERVER_WORKERS=4
 EXPOSE 8000
 CMD ["docker/start.sh"]
