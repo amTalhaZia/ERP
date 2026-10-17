@@ -7,13 +7,14 @@ use App\Models\Finance\Invoice;
 use App\Support\Tenancy\TenantContext;
 use Database\Seeders\Demo\PayrollDemoSeeder;
 use Database\Seeders\Demo\SmallFinanceDemoSeeder;
+use Database\Seeders\Demo\SmallHrDemoSeeder;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
 /**
  * Adds HR activity (leave, attendance), accounting (invoices, bills, payments,
- * journals) and payroll (three runs)
- * to the existing small demo company without touching anything already there.
+ * journals) and payroll (three runs) to the existing small demo company without
+ * touching anything already there.
  * Runs once: it stops if the company already has invoices.
  *
  *   php artisan db:seed --class=SmallDemoExtrasSeeder
