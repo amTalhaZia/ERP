@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[Fillable([
     'company_id', 'actor_id', 'actor_name', 'action', 'entity_type', 'entity_id', 'entity_label',
-    'old_values', 'new_values', 'context', 'ip_address', 'user_agent',
+    'old_values', 'new_values', 'context', 'ip_address', 'country_code', 'city', 'user_agent',
 ])]
 class AuditLog extends Model
 {

@@ -60,6 +60,8 @@ export interface AuditLog {
   new_values: Record<string, unknown> | null;
   context: Record<string, unknown> | null;
   ip_address: string | null;
+  country_code?: string | null;
+  city?: string | null;
   user_agent: string | null;
   created_at: string;
 }

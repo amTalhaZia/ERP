@@ -10,6 +10,10 @@ return [
     */
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
 
+    // Shared with the frontend proxy; only requests carrying it may report the visitor's
+    // country/city (X-ERP-Geo-* headers) for the audit log. Empty = location not recorded.
+    'geo_header_secret' => env('GEO_HEADER_SECRET', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Tenant context

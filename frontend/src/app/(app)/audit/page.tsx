@@ -26,6 +26,16 @@ const ACTION_GROUPS = [
 ] as const;
 
 const who = (l: AuditLog) => l.actor?.name ?? l.actor_name ?? 'System (automatic)';
+
+const countryNames = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames(['en'], { type: 'region' }) : null;
+/** "PK" → 🇵🇰 (regional-indicator letters). */
+const flag = (code: string) => String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
+/** "🇵🇰 Lahore, Pakistan" — null when the location wasn't recorded (local use, older entries). */
+const place = (l: AuditLog): string | null => {
+  if (!l.country_code) return null;
+  const country = countryNames?.of(l.country_code) ?? l.country_code;
+  return `${flag(l.country_code)} ${l.city ? `${l.city}, ` : ''}${country}`;
+};
 // "App\Models\HR\PerformanceReview" → "Performance review #1" when the record has no friendlier name.
 const record = (l: AuditLog) => {
   if (l.entity_label) return l.entity_label;
@@ -72,6 +82,7 @@ function AuditInner() {
       cell: ({ row }) => <span title={row.original.action}>{auditActionLabel(row.original.action)}</span>,
     },
     { id: 'entity', header: 'On which record', cell: ({ row }) => record(row.original) },
+    { id: 'location', header: 'Location', cell: ({ row }) => place(row.original) ?? <span className={styles.muted}>—</span> },
     { id: 'ip', header: 'Internet address (IP)', cell: ({ row }) => <span className={styles.mono}>{row.original.ip_address ?? '—'}</span> },
   ];
 
@@ -101,6 +112,7 @@ function AuditInner() {
               <dt>Who</dt><dd>{who(open)}</dd>
               <dt>What happened</dt><dd>{auditActionLabel(open.action)}</dd>
               <dt>On which record</dt><dd>{record(open)}</dd>
+              <dt>Location</dt><dd>{place(open) ?? 'Not recorded'}</dd>
               <dt>Internet address</dt><dd className={styles.mono}>{open.ip_address ?? '—'}</dd>
               <dt>Device / browser</dt><dd style={{ fontSize: 12 }}>{open.user_agent ?? '—'}</dd>
               <dt>Technical code</dt><dd className={styles.mono} style={{ fontSize: 12 }}>{open.action}</dd>

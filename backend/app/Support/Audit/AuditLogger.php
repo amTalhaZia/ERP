@@ -3,6 +3,7 @@
 namespace App\Support\Audit;
 
 use App\Models\AuditLog;
+use App\Support\Http\ClientLocation;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -45,6 +46,7 @@ class AuditLogger
         ?string $entityLabel = null,
     ): AuditLog {
         $actor = $this->request->user();
+        $location = ClientLocation::from($this->request);
 
         return AuditLog::query()->create([
             'company_id' => $companyId ?? $this->tenant->id() ?? ($entity?->getAttribute('company_id')),
@@ -58,6 +60,8 @@ class AuditLogger
             'new_values' => $new === null ? null : $this->sanitize($new),
             'context' => $context === [] ? null : $this->sanitize($context),
             'ip_address' => $this->request->ip(),
+            'country_code' => $location['country_code'],
+            'city' => $location['city'],
             'user_agent' => Str::limit((string) $this->request->userAgent(), 255, ''),
         ]);
     }
