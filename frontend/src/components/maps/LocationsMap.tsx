@@ -58,7 +58,9 @@ export default function LocationsMap({ points, height = 520 }: { points: MapPoin
     process.env.NEXT_PUBLIC_MAP_ATTRIBUTION ?? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
   return (
-    <MapContainer center={[20, 0]} zoom={2} style={{ height, width: '100%', borderRadius: 12 }} scrollWheelZoom>
+    // zIndex 0 + isolation keeps Leaflet's internal z-indexes (400–1000) inside the map,
+    // so menus, the mobile sidebar and dialogs always open above it.
+    <MapContainer center={[20, 0]} zoom={2} style={{ height, width: '100%', borderRadius: 12, zIndex: 0, isolation: 'isolate' }} scrollWheelZoom>
       <TileLayer url={tileUrl} attribution={attribution} />
       <FitBounds points={points} />
       {points.map((p) => (
